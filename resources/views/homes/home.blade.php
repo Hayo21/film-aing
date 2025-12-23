@@ -101,7 +101,7 @@
     @endphp
 
     {{-- CAROUSEL CONTAINER --}}
-    <div class="relative w-full h-screen overflow-hidden bg-black group" id="carousel-wrapper">
+    <div class="relative w-full h-[55vh] md:h-[65vh] overflow-hidden bg-black group" id="carousel-wrapper">
 
         {{-- SLIDES TRACK --}}
         <div class="flex h-full transition-transform duration-700 ease-in-out" id="track">
@@ -118,7 +118,7 @@
                         <div class="container mx-auto px-8 md:px-16 max-w-2xl">
 
                             <span
-                                class="anim-item anim-badge inline-block px-3 py-1 {{ $slide['color'] }} text-white text-sm font-semibold rounded mb-4">
+                                class="anim-item anim-badge inline-block px-3 py-1 {{ $slide['color'] }} text-white text-sm font-semibold rounded mb-4 mt-10">
                                 {{ $slide['badge'] }}
                             </span>
 
@@ -230,6 +230,17 @@
         // Init
         resetTimer();
     </script>
+
+    <h1 class="mt-5" style="color: white">
+        Lorem ipsum dolor, sit amet consectetur adipisicing elit. Velit vitae totam voluptates et alias explicabo
+        voluptatibus. Facilis reprehenderit suscipit excepturi debitis saepe doloremque facere alias, ipsa quibusdam
+        porro soluta odit cumque quidem fuga nesciunt fugiat eligendi assumenda sunt voluptas eaque provident, neque
+        sequi. Harum nesciunt eligendi quasi hic fugit blanditiis ea, quibusdam minus error. Blanditiis adipisci iure
+        sint possimus animi reprehenderit tempora obcaecati, distinctio accusantium error mollitia perferendis quidem
+        explicabo doloribus culpa provident maiores quia unde. Facilis vel, aut doloremque consectetur suscipit
+        voluptatibus? Enim architecto cupiditate sit, at magnam dolorum, sed reprehenderit omnis recusandae officiis
+        saepe modi temporibus quisquam iure?
+    </h1>
 </body>
 
 </html>
