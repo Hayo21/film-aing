@@ -241,6 +241,31 @@
         voluptatibus? Enim architecto cupiditate sit, at magnam dolorum, sed reprehenderit omnis recusandae officiis
         saepe modi temporibus quisquam iure?
     </h1>
+
+    {{-- test ambil api --}}
+    <div class="mt-5" style="color: white">
+        <h1>TEST API</h1>
+
+        <h2>Anime (Jikan)</h2>
+        <ul>
+            @if (!empty($animes))
+                @foreach ($animes as $anime)
+                    <li>{{ $anime['title'] }}</li>
+                @endforeach
+            @endif
+        </ul>
+
+        <h2>Movie (TMDB)</h2>
+        <ul>
+            @if (!empty($movies))
+                @foreach ($movies as $movie)
+                    <li>{{ $movie['title'] }}</li>
+                @endforeach
+            @endif
+        </ul>
+    </div>
+
+
 </body>
 
 </html>

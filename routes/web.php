@@ -1,26 +1,22 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\EntertainmentController;
 
+// tes api
+// Route::get('/test-api', [EntertainmentController::class, 'test']);
 
+// halaman utama (PAKAI CONTROLLER)
+Route::get('/', [EntertainmentController::class, 'index'])->name('home');
 
-Route::get('/', function () {
-    return view('homes.home');
-})->name('home');
+// film + anime
+Route::get('/hiburan', [EntertainmentController::class, 'index']);
 
-
-Route::get('/categories', function () {
-    return view('categories.categories');
-})->name('categories');
-
-Route::get('/films', function () {
-    return view('films.films');
-})->name('films');
-
-Route::get('/about', function () {
-    return view('about.about');
-})->name('about');
+// halaman statis
+Route::get('/categories', fn() => view('categories.categories'))->name('categories');
+Route::get('/films', fn() => view('films.films'))->name('films');
+Route::get('/about', fn() => view('about.about'))->name('about');
 
 // Route::get('/dashboard', function () {
 //     return view('dashboard');
