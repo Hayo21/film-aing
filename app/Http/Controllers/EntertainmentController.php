@@ -47,7 +47,7 @@ class EntertainmentController extends Controller
             // Jika error, biarkan $movieData tetap kosong
         }
 
-        // 4. Kirim ke View
+        // 4. Kirim data ke viws ke View
         // Pastikan nama view sesuai dengan lokasi file Anda!
         return view('homes.home', [
             'animes' => $animeData,
