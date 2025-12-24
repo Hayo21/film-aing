@@ -17,6 +17,7 @@ class EntertainmentController extends Controller
         // 2. Ambil Data Anime (Dengan Pengaman)
         try {
             // Kita pakai timeout 5 detik agar loading tidak selamanya jika Jikan lemot
+            /** @var \Illuminate\Http\Client\Response $jikan */
             $jikan = Http::timeout(5)->get('https://api.jikan.moe/v4/top/anime');
 
             if ($jikan->successful()) {
@@ -33,6 +34,7 @@ class EntertainmentController extends Controller
 
             // Cek API Key dulu
             if ($apiKey) {
+                /** @var \Illuminate\Http\Client\Response $tmdb */
                 $tmdb = Http::timeout(5)->get('https://api.themoviedb.org/3/movie/popular', [
                     'api_key' => $apiKey
                 ]);
