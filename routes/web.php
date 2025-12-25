@@ -3,12 +3,13 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\EntertainmentController;
+use App\Http\Controllers\HomeController;
 
 // tes api
 // Route::get('/test-api', [EntertainmentController::class, 'test']);
 
 // halaman utama (PAKAI CONTROLLER)
-Route::get('/', [EntertainmentController::class, 'index'])->name('home');
+Route::get('/', [HomeController::class, 'index'])->name('home');
 
 // film + anime
 Route::get('/hiburan', [EntertainmentController::class, 'index']);
@@ -18,6 +19,7 @@ Route::get('/categories', fn() => view('categories.categories'))->name('categori
 Route::get('/films', fn() => view('films.films'))->name('films');
 Route::get('/about', fn() => view('about.about'))->name('about');
 
+// di bawah adalah bagian login bawaan dari laravel breeze
 // Route::get('/dashboard', function () {
 //     return view('dashboard');
 // })->middleware(['auth', 'verified'])->name('dashboard');
