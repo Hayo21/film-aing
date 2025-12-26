@@ -30,6 +30,47 @@ class HomeController extends Controller
         ]);
     }
 
+    // Halaman Detail Movie
+    public function showMovie($id)
+    {
+        $apiKey = env('TMDB_API_KEY');
+
+        // Fetch detail movie + cast + videos + similar movies
+        /** @var \Illuminate\Http\Client\Response $response */
+        $response = Http::get("https://api.themoviedb.org/3/movie/{$id}", [
+            'api_key'            => $apiKey,
+            'language'           => 'id-ID',
+            'append_to_response' => 'credits,videos,similar'
+        ]);
+
+        $movie = $response->json();
+
+        // jika tidak ketemu menapilkan error 404
+        if (isset($movie['success']) && $movie['success'] === false) {
+            return redirect()->route('home')->with('error', 'Film tidak ditemukan.');
+        }
+
+        // mengarahkan ke view detail movie
+        return view('homes.detail-movie', ['movie' => $movie]);
+    }
+
+    // Halaman Detail Anime
+    public function showAnime($id)
+    {
+        // Fetch detail anime dari Jikan API
+        $response = Http::get("https://api.jikan.moe/v4/anime/{$id}/full");
+
+        /** @var Response $response */
+        if ($response->failed()) {
+            return redirect()->route('home')->with('error', 'Anime tidak ditemukan.');
+        }
+        /** @var Response $response */
+        $anime = $response->json()['data'] ?? [];
+
+        // mengarahkan ke view detail anime
+        return view('homes.detail-anime', ['anime' => $anime]);
+    }
+
     /**
      * Ambil data anime dari Jikan API dengan caching
      * * @return array

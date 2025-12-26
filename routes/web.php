@@ -19,6 +19,10 @@ Route::get('/categories', fn() => view('categories.categories'))->name('categori
 Route::get('/films', fn() => view('films.films'))->name('films');
 Route::get('/about', fn() => view('about.about'))->name('about');
 
+// route info selengkapnya untuk card
+Route::get('/movie/{id}', [HomeController::class, 'showMovie'])->name('movie.detail');
+Route::get('/anime/{id}', [HomeController::class, 'showAnime'])->name('anime.detail');
+
 // di bawah adalah bagian login bawaan dari laravel breeze
 // Route::get('/dashboard', function () {
 //     return view('dashboard');
