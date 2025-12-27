@@ -27,7 +27,7 @@
             <div class="lg:col-span-2 space-y-8">
 
                 {{-- Movie Info Grid --}}
-                <div class="grid grid-cols-2 mb-3 md:grid-cols-3 gap-6 border rounded-2xl  p-3 ">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 border rounded-2xl p-4 border-gray-700/60">
                     {{-- Poster --}}
                     <div class="md:col-span-1 flex justify-center">
                         <div
@@ -38,9 +38,6 @@
                                 class="w-full h-full object-cover" alt="{{ $movie['title'] }} Poster">
                         </div>
                     </div>
-
-
-
 
                     {{-- Movie Details --}}
                     <div class="md:col-span-2 space-y-6">
@@ -71,6 +68,37 @@
                         </div>
                     </div>
                 </div>
+
+                {{-- Trailer --}}
+                @php
+                    $trailer = null;
+
+                    if (!empty($movie['videos']['results'])) {
+                        foreach ($movie['videos']['results'] as $video) {
+                            if ($video['site'] === 'YouTube' && $video['type'] === 'Trailer') {
+                                $trailer = $video;
+                                break;
+                            }
+                        }
+                    }
+                @endphp
+
+                @if ($trailer)
+                    <section class="bg-gray-800/50 backdrop-blur-sm rounded-2xl p-6 border border-gray-700/50">
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="w-1 h-8 bg-red-600 rounded-full"></div>
+                            <h2 class="text-2xl font-bold">Trailer</h2>
+                        </div>
+
+                        <div class="aspect-video rounded-xl overflow-hidden">
+                            <iframe class="w-full h-full" src="https://www.youtube.com/embed/{{ $trailer['key'] }}"
+                                frameborder="0"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                allowfullscreen>
+                            </iframe>
+                        </div>
+                    </section>
+                @endif
 
                 {{-- Cast --}}
                 @if (isset($movie['credits']['cast']) && count($movie['credits']['cast']) > 0)
@@ -110,7 +138,7 @@
 
             {{-- RIGHT SIDEBAR --}}
             <div class="space-y-6">
-                <div class="bg-gray-800/50 backdrop-blur-sm rounded-2xl p-6 border border-gray-700/50 sticky top-4">
+                <div class="bg-gray-800/50 backdrop-blur-sm rounded-2xl p-6 border border-gray-700/50 ">
                     <h3 class="text-xl font-bold mb-6 flex items-center gap-2">
                         <svg class="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"

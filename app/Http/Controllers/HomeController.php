@@ -35,40 +35,89 @@ class HomeController extends Controller
     {
         $apiKey = env('TMDB_API_KEY');
 
-        // Fetch detail movie + cast + videos + similar movies
-        /** @var \Illuminate\Http\Client\Response $response */
-        $response = Http::get("https://api.themoviedb.org/3/movie/{$id}", [
-            'api_key'            => $apiKey,
-            'language'           => 'id-ID',
-            'append_to_response' => 'credits,videos,similar'
-        ]);
+        // Request Bahasa Indonesia
+        $responseID = Http::timeout(self::API_TIMEOUT)->get(
+            "https://api.themoviedb.org/3/movie/{$id}",
+            [
+                'api_key'            => $apiKey,
+                'language'           => 'id-ID',
+                'append_to_response' => 'credits,videos,similar'
+            ]
+        );
 
-        $movie = $response->json();
+        // Request Bahasa Inggris (fallback)
+        $responseEN = Http::timeout(self::API_TIMEOUT)->get(
+            "https://api.themoviedb.org/3/movie/{$id}",
+            [
+                'api_key'            => $apiKey,
+                'language'           => 'en-US',
+                'append_to_response' => 'credits,videos,similar'
+            ]
+        );
 
-        // jika tidak ketemu menapilkan error 404
-        if (isset($movie['success']) && $movie['success'] === false) {
+        // Jika dua-duanya gagal
+        /** @var Response $responseID */
+        /** @var Response $responseEN */
+        if ($responseID->failed() && $responseEN->failed()) {
             return redirect()->route('home')->with('error', 'Film tidak ditemukan.');
         }
 
-        // mengarahkan ke view detail movie
-        return view('homes.detail-movie', ['movie' => $movie]);
+        $movieID = $responseID->json() ?? [];
+        /** @var Response $responseEN */
+        $movieEN = $responseEN->json() ?? [];
+
+        // Merge data (ID → EN fallback)
+        $movie = $movieID;
+
+        // Fallback overview
+        if (empty(trim($movieID['overview'] ?? ''))) {
+            $movie['overview'] = $movieEN['overview'] ?? 'Tidak ada sinopsis tersedia.';
+        }
+
+        // Fallback tagline
+        if (empty(trim($movieID['tagline'] ?? ''))) {
+            $movie['tagline'] = $movieEN['tagline'] ?? null;
+        }
+
+        // Fallback title (jarang kosong, tapi aman)
+        if (empty(trim($movieID['title'] ?? ''))) {
+            $movie['title'] = $movieEN['title'] ?? 'Unknown Title';
+        }
+
+        return view('homes.detail-movie', compact('movie'));
     }
+
 
     // Halaman Detail Anime
     public function showAnime($id)
     {
-        // Fetch detail anime dari Jikan API
-        $response = Http::get("https://api.jikan.moe/v4/anime/{$id}/full");
+        // 1. Fetch detail anime dari Jikan API
+        $responseDetail = Http::get("https://api.jikan.moe/v4/anime/{$id}/full");
 
-        /** @var Response $response */
-        if ($response->failed()) {
+        // 2. Fetch karakter anime dari Jikan API (Endpoint terpisah)
+        $responseCharacters = Http::get("https://api.jikan.moe/v4/anime/{$id}/characters");
+
+        /** @var Response $responseDetail */
+        if ($responseDetail->failed()) {
             return redirect()->route('home')->with('error', 'Anime tidak ditemukan.');
         }
-        /** @var Response $response */
-        $anime = $response->json()['data'] ?? [];
 
-        // mengarahkan ke view detail anime
-        return view('homes.detail-anime', ['anime' => $anime]);
+        $anime = $responseDetail->json()['data'] ?? [];
+
+        // Ambil data karakter, jika gagal set array kosong
+        /** @var Response $responseCharacters */
+        $characters = $responseCharacters->successful() ? ($responseCharacters->json()['data'] ?? []) : [];
+
+        // Mengurutkan agar karakter 'Main' muncul duluan (Opsional)
+        usort($characters, function ($a, $b) {
+            return $a['role'] === 'Main' ? -1 : 1;
+        });
+
+        // Kirim $anime DAN $characters ke view
+        return view('homes.detail-anime', [
+            'anime' => $anime,
+            'characters' => $characters
+        ]);
     }
 
     /**
