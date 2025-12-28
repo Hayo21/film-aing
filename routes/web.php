@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\EntertainmentController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\CategoryController;
 
 // tes api
 // Route::get('/test-api', [EntertainmentController::class, 'test']);
@@ -14,8 +15,14 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 // film + anime
 Route::get('/hiburan', [EntertainmentController::class, 'index']);
 
+// category film and anime
+Route::get('/categories', [CategoryController::class, 'index'])
+    ->name('categories.index');
+
+Route::get('/categories/{name}', [CategoryController::class, 'show'])
+    ->name('categories.show');
+
 // halaman statis
-Route::get('/categories', fn() => view('categories.categories'))->name('categories');
 Route::get('/films', fn() => view('films.films'))->name('films');
 Route::get('/about', fn() => view('about.about'))->name('about');
 

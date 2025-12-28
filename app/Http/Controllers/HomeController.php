@@ -84,6 +84,11 @@ class HomeController extends Controller
             $movie['title'] = $movieEN['title'] ?? 'Unknown Title';
         }
 
+        // genres berbahasa inggris untuk film
+        if (!empty($movieEN['genres'])) {
+            $movie['genres'] = $movieEN['genres'];
+        }
+
         return view('homes.detail-movie', compact('movie'));
     }
 

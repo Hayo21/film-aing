@@ -123,7 +123,7 @@
                                     {{-- Nama Karakter --}}
                                     <h4 class="font-bold text-sm mb-1 text-white truncate">
                                         <a href="{{ $char['character']['url'] ?? '#' }}" target="_blank"
-                                            class="hover:text-purple-400">
+                                            class="hover:text-white-400">
                                             {{ $char['character']['name'] }}
                                         </a>
                                     </h4>
@@ -140,7 +140,7 @@
                                     @if ($va)
                                         <div class="border-t border-gray-600 pt-2 mt-2">
                                             <p class="text-[10px] text-gray-500">Voice Actor</p>
-                                            <p class="text-xs text-purple-300 truncate">{{ $va['person']['name'] }}</p>
+                                            <p class="text-m text-white-300 truncate">{{ $va['person']['name'] }}</p>
                                         </div>
                                     @endif
                                 </div>

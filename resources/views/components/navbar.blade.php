@@ -1,11 +1,12 @@
 <nav class="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 w-11/12 max-w-6xl text-gray-800">
     <div
-        class="bg-white/30 backdrop-blur-xl rounded-full 
-            shadow-[0_8px_30px_rgba(0,0,0,0.12)] 
-            px-6 py-3 
-            border border-white/40 ">
+        class="bg-white/30 backdrop-blur-xl rounded-full
+               shadow-[0_8px_30px_rgba(0,0,0,0.12)]
+               px-6 py-3
+               border border-white/40">
 
-        <div class="flex items-center justify-between ">
+        <div class="flex items-center justify-between">
+
             <!-- Logo -->
             <a href="{{ url('/') }}" class="flex items-center space-x-2">
                 <svg class="w-8 h-8 text-red-600" fill="currentColor" viewBox="0 0 20 20">
@@ -16,66 +17,71 @@
             </a>
 
             <!-- Navigation Links -->
-            <div class="hidden md:flex items-center space-x-8 text-gray-100 ">
+            <div class="hidden md:flex items-center space-x-8 text-gray-100">
+
                 <a href="{{ route('home') }}"
                     class="relative font-medium transition-colors duration-200
-       {{ request()->routeIs('home')
-           ? 'text-blue-500 after:absolute after:left-0 after:-bottom-1 after:w-full after:h-0.5 after:bg-blue-500'
-           : 'text-gray-100 hover:text-red-500
-                           after:absolute after:left-0 after:bottom-0 after:h-0.5 after:w-full
-                           after:bg-red-500 after:scale-x-0 after:origin-left
-                           hover:after:scale-x-100 after:transition-transform after:duration-300' }}">
+                   {{ request()->routeIs('home')
+                       ? 'text-blue-500 after:absolute after:left-0 after:-bottom-1 after:w-full after:h-0.5 after:bg-blue-500'
+                       : 'text-gray-100 hover:text-red-500
+                                                                                                                                                                                  after:absolute after:left-0 after:bottom-0 after:h-0.5 after:w-full
+                                                                                                                                                                                  after:bg-red-500 after:scale-x-0 after:origin-left
+                                                                                                                                                                                  hover:after:scale-x-100 after:transition-transform after:duration-300' }}">
                     Home
                 </a>
 
-                <a href="{{ route('films') }}"
+                <a href="{{ route('categories.index') }}"
                     class="relative font-medium transition-colors duration-200
-       {{ request()->routeIs('films')
-           ? 'text-blue-500 after:absolute after:left-0 after:-bottom-1 after:w-full after:h-0.5 after:bg-blue-500'
-           : 'text-gray-100 hover:text-red-500
-                                  after:absolute after:left-0 after:bottom-0 after:h-0.5 after:w-full
-                                  after:bg-red-500 after:scale-x-0 after:origin-left
-                                  hover:after:scale-x-100 after:transition-transform after:duration-300' }}">
-                    Film
-                </a>
-
-                <a href="{{ route('categories') }}"
-                    class="relative font-medium transition-colors duration-200
-       {{ request()->routeIs('categories')
-           ? 'text-blue-500 after:absolute after:left-0 after:-bottom-1 after:w-full after:h-0.5 after:bg-blue-500'
-           : 'text-gray-100 hover:text-red-500
-                                         after:absolute after:left-0 after:bottom-0 after:h-0.5 after:w-full
-                                         after:bg-red-500 after:scale-x-0 after:origin-left
-                                         hover:after:scale-x-100 after:transition-transform after:duration-300' }}">
+   {{ request()->routeIs('categories.index')
+       ? 'text-blue-500 after:absolute after:left-0 after:-bottom-1 after:w-full after:h-0.5 after:bg-blue-500'
+       : 'text-gray-100 hover:text-red-500
+                    after:absolute after:left-0 after:bottom-0 after:h-0.5 after:w-full
+                    after:bg-red-500 after:scale-x-0 after:origin-left
+                    hover:after:scale-x-100 after:transition-transform after:duration-300' }}">
                     Kategori
                 </a>
 
+
+
+                <a href="{{ route('films') }}"
+                    class="relative font-medium transition-colors duration-200
+                   {{ request()->routeIs('films')
+                       ? 'text-blue-500 after:absolute after:left-0 after:-bottom-1 after:w-full after:h-0.5 after:bg-blue-500'
+                       : 'text-gray-100 hover:text-red-500
+                                                                                                                                                                                  after:absolute after:left-0 after:bottom-0 after:h-0.5 after:w-full
+                                                                                                                                                                                  after:bg-red-500 after:scale-x-0 after:origin-left
+                                                                                                                                                                                  hover:after:scale-x-100 after:transition-transform after:duration-300' }}">
+                    Film
+                </a>
+
+
                 <a href="{{ route('about') }}"
                     class="relative font-medium transition-colors duration-200
-       {{ request()->routeIs('about')
-           ? 'text-blue-500 after:absolute after:left-0 after:-bottom-1 after:w-full after:h-0.5 after:bg-blue-500'
-           : 'text-gray-100 hover:text-red-500
-                                                after:absolute after:left-0 after:bottom-0 after:h-0.5 after:w-full
-                                                after:bg-red-500 after:scale-x-0 after:origin-left
-                                                hover:after:scale-x-100 after:transition-transform after:duration-300' }}">
+                   {{ request()->routeIs('about')
+                       ? 'text-blue-500 after:absolute after:left-0 after:-bottom-1 after:w-full after:h-0.5 after:bg-blue-500'
+                       : 'text-gray-100 hover:text-red-500
+                                                                                                                                                                                  after:absolute after:left-0 after:bottom-0 after:h-0.5 after:w-full
+                                                                                                                                                                                  after:bg-red-500 after:scale-x-0 after:origin-left
+                                                                                                                                                                                  hover:after:scale-x-100 after:transition-transform after:duration-300' }}">
                     Tentang
                 </a>
+
             </div>
 
-            <!-- Search & Mobile Menu Button -->
+            <!-- Search & Mobile Button -->
             <div class="flex items-center space-x-3">
 
-                <!-- Expandable Glass Search -->
+                <!-- Search -->
                 <div class="relative flex items-center group">
                     <input type="text" placeholder="Cari film..."
                         class="w-0 md:group-hover:w-44 group-focus-within:w-44
-                   opacity-0 md:group-hover:opacity-100 group-focus-within:opacity-100
-                   mr-2 px-3 py-1.5 text-sm text-gray-100
-                   bg-white/20 backdrop-blur-md
-                   border border-white/30 rounded-full
-                   placeholder-gray-400
-                   focus:outline-none focus:ring-2 focus:ring-red-500/50
-                   transition-all duration-300" />
+                               opacity-0 md:group-hover:opacity-100 group-focus-within:opacity-100
+                               mr-2 px-3 py-1.5 text-sm text-gray-100
+                               bg-white/20 backdrop-blur-md
+                               border border-white/30 rounded-full
+                               placeholder-gray-400
+                               focus:outline-none focus:ring-2 focus:ring-red-500/50
+                               transition-all duration-300" />
 
                     <button type="button" onclick="this.previousElementSibling.focus()"
                         class="text-gray-100 hover:text-red-500 transition-colors duration-200">
@@ -94,65 +100,63 @@
                             d="M4 6h16M4 12h16M4 18h16" />
                     </svg>
                 </button>
+
             </div>
-
         </div>
-
     </div>
 
-    <!-- Mobile Menu - Outside rounded container -->
+    <!-- Mobile Menu -->
     <div id="mobile-menu"
-        class="hidden md:hidden mt-2 
-           bg-white/30 backdrop-blur-xl 
-           rounded-2xl 
-           shadow-[0_8px_30px_rgba(0,0,0,0.12)] 
-           px-6 py-4 
-           border border-white/40">
+        class="hidden md:hidden mt-2
+               bg-white/30 backdrop-blur-xl
+               rounded-2xl
+               shadow-[0_8px_30px_rgba(0,0,0,0.12)]
+               px-6 py-4
+               border border-white/40">
 
         <div class="flex flex-col space-y-3 text-gray-100">
 
             <a href="{{ route('home') }}"
                 class="relative font-medium py-2 transition-colors duration-200
-   {{ request()->routeIs('home')
-       ? 'text-blue-500 after:absolute after:left-0 after:bottom-0 after:h-0.5 after:w-full after:bg-blue-500'
-       : 'text-gray-100 hover:text-red-500
-                                     after:absolute after:left-0 after:bottom-0 after:h-0.5 after:w-full
-                                     after:bg-red-500 after:scale-x-0 after:origin-left
-                                     hover:after:scale-x-100 after:transition-transform after:duration-300' }}">
+                {{ request()->routeIs('home')
+                    ? 'text-blue-500 after:absolute after:left-0 after:bottom-0 after:h-0.5 after:w-full after:bg-blue-500'
+                    : 'text-gray-100 hover:text-red-500
+                                                                                                                                                       after:absolute after:left-0 after:bottom-0 after:h-0.5 after:w-full
+                                                                                                                                                       after:bg-red-500 after:scale-x-0 after:origin-left
+                                                                                                                                                       hover:after:scale-x-100 after:transition-transform after:duration-300' }}">
                 Home
             </a>
 
-
             <a href="{{ route('films') }}"
                 class="relative font-medium py-2 transition-colors duration-200
-         {{ request()->routeIs('films')
-             ? 'text-blue-500 after:absolute after:left-0 after:bottom-0 after:w-full after:h-0.5 after:bg-blue-500'
-             : 'text-gray-100 hover:text-red-500
-                                                                                     after:absolute after:left-0 after:bottom-0 after:h-0.5 after:w-full
-                                                                                     after:bg-red-500 after:scale-x-0 after:origin-left
-                                                                                     hover:after:scale-x-100 after:transition-transform after:duration-300' }}">
+                {{ request()->routeIs('films')
+                    ? 'text-blue-500 after:absolute after:left-0 after:bottom-0 after:h-0.5 after:w-full after:bg-blue-500'
+                    : 'text-gray-100 hover:text-red-500
+                                                                                                                                                       after:absolute after:left-0 after:bottom-0 after:h-0.5 after:w-full
+                                                                                                                                                       after:bg-red-500 after:scale-x-0 after:origin-left
+                                                                                                                                                       hover:after:scale-x-100 after:transition-transform after:duration-300' }}">
                 Film
             </a>
 
-            <a href="{{ route('categories') }}"
+            <a href="{{ route('categories.index') }}"
                 class="relative font-medium py-2 transition-colors duration-200
-          {{ request()->routeIs('categories')
-              ? 'text-blue-500 after:absolute after:left-0 after:bottom-0 after:w-full after:h-0.5 after:bg-blue-500'
-              : 'text-gray-100 hover:text-red-500
-                                                                                   after:absolute after:left-0 after:bottom-0 after:h-0.5 after:w-full
-                                                                                   after:bg-red-500 after:scale-x-0 after:origin-left
-                                                                                   hover:after:scale-x-100 after:transition-transform after:duration-300' }}">
+                {{ request()->routeIs('categories.index')
+                    ? 'text-blue-500 after:absolute after:left-0 after:bottom-0 after:h-0.5 after:w-full after:bg-blue-500'
+                    : 'text-gray-100 hover:text-red-500
+                                                                                                                                                       after:absolute after:left-0 after:bottom-0 after:h-0.5 after:w-full
+                                                                                                                                                       after:bg-red-500 after:scale-x-0 after:origin-left
+                                                                                                                                                       hover:after:scale-x-100 after:transition-transform after:duration-300' }}">
                 Kategori
             </a>
 
             <a href="{{ route('about') }}"
                 class="relative font-medium py-2 transition-colors duration-200
-         {{ request()->routeIs('about')
-             ? 'text-blue-500 after:absolute after:left-0 after:bottom-0 after:w-full after:h-0.5 after:bg-blue-500'
-             : 'text-gray-100 hover:text-red-500
-                                                                   after:absolute after:left-0 after:bottom-0 after:h-0.5 after:w-full
-                                                                   after:bg-red-500 after:scale-x-0 after:origin-left
-                                                                   hover:after:scale-x-100 after:transition-transform after:duration-300' }}">
+                {{ request()->routeIs('about')
+                    ? 'text-blue-500 after:absolute after:left-0 after:bottom-0 after:h-0.5 after:w-full after:bg-blue-500'
+                    : 'text-gray-100 hover:text-red-500
+                                                                                                                                                       after:absolute after:left-0 after:bottom-0 after:h-0.5 after:w-full
+                                                                                                                                                       after:bg-red-500 after:scale-x-0 after:origin-left
+                                                                                                                                                       hover:after:scale-x-100 after:transition-transform after:duration-300' }}">
                 Tentang
             </a>
 
@@ -161,9 +165,11 @@
 </nav>
 
 <script>
-    // Toggle Mobile Menu
-    document.getElementById('mobile-menu-button').addEventListener('click', function() {
-        const menu = document.getElementById('mobile-menu');
-        menu.classList.toggle('hidden');
-    });
+    document
+        .getElementById('mobile-menu-button')
+        .addEventListener('click', function() {
+            document
+                .getElementById('mobile-menu')
+                .classList.toggle('hidden');
+        });
 </script>

@@ -22,46 +22,59 @@
     <div class="container mx-auto px-4 py-12">
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
-
             {{-- LEFT COLUMN --}}
             <div class="lg:col-span-2 space-y-8">
 
-                {{-- Movie Info Grid --}}
+                {{-- Movie Info --}}
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 border rounded-2xl p-4 border-gray-700/60">
+
                     {{-- Poster --}}
-                    <div class="md:col-span-1 flex justify-center">
+                    <div class="md:col-span-1 flex justify-center md:justify-start">
                         <div
                             class="w-[140px] sm:w-[160px] md:w-[180px] lg:w-[200px]
-               aspect-[2/3] rounded-2xl overflow-hidden
-               shadow-2xl border border-gray-700/60">
+                                aspect-[2/3] rounded-2xl overflow-hidden
+                                shadow-2xl border border-gray-700/60">
                             <img src="https://image.tmdb.org/t/p/w500{{ $movie['poster_path'] }}"
-                                class="w-full h-full object-cover" alt="{{ $movie['title'] }} Poster">
+                                class="w-full h-full object-cover" alt="{{ $movie['title'] }}">
                         </div>
                     </div>
 
-                    {{-- Movie Details --}}
+                    {{-- Details --}}
                     <div class="md:col-span-2 space-y-6">
+
                         {{-- Title --}}
                         <div>
-                            <h2 class="text-3xl font-bold mb-2">{{ $movie['title'] }}</h2>
-                            @if ($movie['tagline'])
+                            <h2 class="text-3xl font-bold mb-1">{{ $movie['title'] }}</h2>
+                            @if (!empty($movie['tagline']))
                                 <p class="text-gray-400 italic">"{{ $movie['tagline'] }}"</p>
                             @endif
                         </div>
 
-                        {{-- Genres --}}
+                        {{-- Status & Language --}}
                         <div class="flex flex-wrap gap-2">
-                            @foreach ($movie['genres'] as $genre)
-                                <span
-                                    class="px-4 py-1.5 bg-red-600/30 text-red-300 border border-red-500/50 rounded-full text-sm font-medium">
-                                    {{ $genre['name'] }}
-                                </span>
-                            @endforeach
+                            {{-- TYPE --}}
+                            <span
+                                class="px-4 py-1.5 bg-purple-600/30 text-purple-300 border border-purple-500/50 rounded-full text-sm">
+                                Movie
+                            </span>
+
+                            {{-- STATUS --}}
+                            <span
+                                class="px-4 py-1.5 bg-red-600/30 text-red-300 border border-red-500/50 rounded-full text-sm">
+                                {{ $movie['status'] }}
+                            </span>
+
+                            {{-- LANGUAGE --}}
+                            <span
+                                class="px-4 py-1.5 bg-blue-600/30 text-blue-300 border border-blue-500/50 rounded-full text-sm uppercase">
+                                {{ $movie['original_language'] }}
+                            </span>
                         </div>
+
 
                         {{-- Synopsis --}}
                         <div>
-                            <h3 class="text-lg md:text-xl font-bold mb-2 md:mb-3">Sinopsis</h3>
+                            <h3 class="text-lg md:text-xl font-bold mb-2">Sinopsis</h3>
                             <p class="text-gray-300 leading-relaxed text-sm md:text-base text-justify">
                                 {{ $movie['overview'] ?: 'Tidak ada sinopsis tersedia.' }}
                             </p>
@@ -71,16 +84,9 @@
 
                 {{-- Trailer --}}
                 @php
-                    $trailer = null;
-
-                    if (!empty($movie['videos']['results'])) {
-                        foreach ($movie['videos']['results'] as $video) {
-                            if ($video['site'] === 'YouTube' && $video['type'] === 'Trailer') {
-                                $trailer = $video;
-                                break;
-                            }
-                        }
-                    }
+                    $trailer = collect($movie['videos']['results'] ?? [])->first(
+                        fn($v) => $v['site'] === 'YouTube' && $v['type'] === 'Trailer',
+                    );
                 @endphp
 
                 @if ($trailer)
@@ -92,17 +98,14 @@
 
                         <div class="aspect-video rounded-xl overflow-hidden">
                             <iframe class="w-full h-full" src="https://www.youtube.com/embed/{{ $trailer['key'] }}"
-                                frameborder="0"
-                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                allowfullscreen>
-                            </iframe>
+                                allowfullscreen></iframe>
                         </div>
                     </section>
                 @endif
 
                 {{-- Cast --}}
-                @if (isset($movie['credits']['cast']) && count($movie['credits']['cast']) > 0)
-                    <section class="bg-gray-800/50 backdrop-blur-sm rounded-2xl p-6 md:p-8 border border-gray-700/50 ">
+                @if (!empty($movie['credits']['cast']))
+                    <section class="bg-gray-800/50 backdrop-blur-sm rounded-2xl p-6 md:p-8 border border-gray-700/50">
                         <div class="flex items-center gap-3 mb-6">
                             <div class="w-1 h-8 bg-red-600 rounded-full"></div>
                             <h2 class="text-2xl md:text-3xl font-bold">Pemeran Utama</h2>
@@ -110,25 +113,17 @@
 
                         <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
                             @foreach (array_slice($movie['credits']['cast'], 0, 8) as $cast)
-                                <div
-                                    class="bg-gray-700/50 rounded-xl p-4 text-center hover:bg-gray-700 transition-colors duration-300">
+                                <div class="bg-gray-700/50 rounded-xl p-4 text-center hover:bg-gray-700 transition">
                                     <div
                                         class="w-20 h-20 mx-auto rounded-full overflow-hidden mb-3 bg-gray-600 border-2 border-gray-500">
                                         @if ($cast['profile_path'])
                                             <img src="https://image.tmdb.org/t/p/w200{{ $cast['profile_path'] }}"
-                                                class="w-full h-full object-cover" alt="{{ $cast['name'] }}">
-                                        @else
-                                            <div class="w-full h-full flex items-center justify-center text-gray-400">
-                                                <svg class="w-10 h-10" fill="currentColor" viewBox="0 0 20 20">
-                                                    <path fill-rule="evenodd"
-                                                        d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
-                                                        clip-rule="evenodd" />
-                                                </svg>
-                                            </div>
+                                                class="w-full h-full object-cover">
                                         @endif
                                     </div>
-                                    <h4 class="font-bold text-sm mb-1 text-white">{{ $cast['name'] }}</h4>
-                                    <p class="text-xs text-gray-400 line-clamp-2">{{ $cast['character'] }}</p>
+
+                                    <h4 class="font-bold text-sm mb-1">{{ $cast['name'] }}</h4>
+                                    <p class="text-xs text-gray-400">{{ $cast['character'] }}</p>
                                 </div>
                             @endforeach
                         </div>
@@ -138,7 +133,7 @@
 
             {{-- RIGHT SIDEBAR --}}
             <div class="space-y-6">
-                <div class="bg-gray-800/50 backdrop-blur-sm rounded-2xl p-6 border border-gray-700/50 ">
+                <div class="bg-gray-800/50 backdrop-blur-sm rounded-2xl p-6 border border-gray-700/50">
                     <h3 class="text-xl font-bold mb-6 flex items-center gap-2">
                         <svg class="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -148,41 +143,47 @@
                     </h3>
 
                     <ul class="space-y-4">
-                        <li class="flex justify-between items-center pb-4 border-b border-gray-700">
-                            <span class="text-gray-400 text-sm">Status</span>
-                            <span class="text-white font-medium">{{ $movie['status'] }}</span>
+                        <li class="flex justify-between pb-4 border-b border-gray-700">
+                            <span class="text-gray-400 text-sm">Release</span>
+                            <span class="text-white font-medium">{{ $movie['release_date'] }}</span>
                         </li>
-                        <li class="flex justify-between items-center pb-4 border-b border-gray-700">
+                        <li class="flex justify-between pb-4 border-b border-gray-700">
+                            <span class="text-gray-400 text-sm">Runtime</span>
+                            <span class="text-white font-medium">{{ $movie['runtime'] }} menit</span>
+                        </li>
+                        <li class="flex justify-between pb-4 border-b border-gray-700">
                             <span class="text-gray-400 text-sm">Budget</span>
                             <span class="text-white font-medium">
-                                @if ($movie['budget'] > 0)
-                                    ${{ number_format($movie['budget']) }}
-                                @else
-                                    -
-                                @endif
+                                {{ $movie['budget'] ? '$' . number_format($movie['budget']) : '-' }}
                             </span>
                         </li>
-                        <li class="flex justify-between items-center pb-4 border-b border-gray-700">
+                        <li class="flex justify-between">
                             <span class="text-gray-400 text-sm">Revenue</span>
                             <span class="text-white font-medium">
-                                @if ($movie['revenue'] > 0)
-                                    ${{ number_format($movie['revenue']) }}
-                                @else
-                                    -
-                                @endif
+                                {{ $movie['revenue'] ? '$' . number_format($movie['revenue']) : '-' }}
                             </span>
                         </li>
-                        <li class="flex justify-between items-center">
-                            <span class="text-gray-400 text-sm">Bahasa Asli</span>
-                            <span class="text-white font-medium uppercase">{{ $movie['original_language'] }}</span>
-                        </li>
                     </ul>
+
+                    {{-- Genres --}}
+                    @if (!empty($movie['genres']))
+                        <div class="mt-6 pt-6 border-t border-gray-700">
+                            <h4 class="text-gray-400 text-sm mb-3">Genres</h4>
+                            <div class="flex flex-wrap gap-2">
+                                @foreach ($movie['genres'] as $genre)
+                                    <span
+                                        class="px-3 py-1.5 bg-red-600/30 text-red-300 border border-red-500/50 rounded-full text-xs">
+                                        {{ $genre['name'] }}
+                                    </span>
+                                @endforeach
+                            </div>
+                        </div>
+                    @endif
                 </div>
             </div>
 
         </div>
     </div>
-
 </body>
 
 </html>
