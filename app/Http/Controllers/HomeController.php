@@ -244,7 +244,7 @@ class HomeController extends Controller
         foreach (array_slice($animes, 0, 2) as $index => $anime) {
             $slides[] = [
                 'img'    => $anime['images']['jpg']['large_image_url'] ?? $anime['images']['jpg']['image_url'] ?? '',
-                'badge'  => $index === 0 ? 'TOP ANIME' : 'POPULAR ANIME',
+                'badge'  => $index === 0 ? 'TOP ANIME' : 'TRENDING ANIME',
                 'color'  => $index === 0 ? 'bg-purple-600' : 'bg-pink-600',
                 'title'  => $anime['title'] ?? 'Unknown Title',
                 'desc'   => $this->limitWords($anime['synopsis'] ?? 'Tidak ada deskripsi.', 25),

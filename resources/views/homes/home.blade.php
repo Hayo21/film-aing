@@ -207,8 +207,12 @@
                     Top Anime
                 </h2>
                 <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
-                    @foreach ($animes as $anime)
-                        @include('homes.partials.movie-card', ['item' => $anime, 'type' => 'anime'])
+                    @foreach ($animes as $index => $item)
+                        @include('homes.partials.movie-card', [
+                            'item' => $item,
+                            'type' => 'anime',
+                            'label' => $index < 5 ? 'TRENDING' : null,
+                        ])
                     @endforeach
                 </div>
             </section>

@@ -73,6 +73,15 @@
     <div
         class="movie-card bg-gray-800 rounded-lg shadow-lg cursor-pointer h-full flex flex-col transition-transform duration-300 group-hover:-translate-y-2 relative">
 
+        @if (!empty($label))
+            <div class="absolute top-2 left-2 z-10">
+                <span
+                    class="text-[10px] font-bold px-2 py-0.5 rounded
+            {{ $type === 'anime' ? 'bg-pink-600 text-white' : 'bg-yellow-500 text-black' }}">
+                    {{ strtoupper($label) }}
+                </span>
+            </div>
+        @endif
         {{-- Badge Type (MOVIE/TV/ANIME) --}}
         <div class="absolute top-2 right-2 z-10">
             <span class="text-[10px] font-bold text-white px-2 py-0.5 rounded shadow-sm {{ $badgeColor }}">
@@ -83,8 +92,8 @@
         {{-- Poster Image Wrapper --}}
         <div class="relative aspect-[2/3] overflow-hidden rounded-t-lg bg-gray-900">
             <img src="{{ $image }}" alt="{{ $title }}"
-                class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" loading="lazy"
-                onerror="this.src='https://via.placeholder.com/500x750?text=No+Image'">
+                class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                loading="lazy" onerror="this.src='https://via.placeholder.com/500x750?text=No+Image'">
 
             {{-- Overlay on Hover --}}
             <div
