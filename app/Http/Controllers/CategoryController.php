@@ -7,12 +7,11 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Cache;
 
-
 class CategoryController extends Controller
 {
     public function index()
     {
-        // Cache selama 24 jam untuk mengurangi API calls
+        // Cache selama 24 jam
         $genres = Cache::remember('all_genres', 86400, function () {
             return $this->fetchGenres();
         });
@@ -28,23 +27,15 @@ class CategoryController extends Controller
         $baseUrlTmdb = 'https://api.themoviedb.org/3';
         $baseUrlJikan = 'https://api.jikan.moe/v4';
 
-        if (empty($apiKey)) {
-            return [];
-        }
+        if (empty($apiKey)) return [];
 
         $finalGenres = [];
 
-        // Parallel requests untuk TMDB (lebih cepat)
+        // 1. Fetch TMDB (Parallel)
         try {
             $responses = Http::pool(fn($pool) => [
-                $pool->as('movie')->timeout(5)->get("{$baseUrlTmdb}/genre/movie/list", [
-                    'api_key' => $apiKey,
-                    'language' => 'en-US'
-                ]),
-                $pool->as('tv')->timeout(5)->get("{$baseUrlTmdb}/genre/tv/list", [
-                    'api_key' => $apiKey,
-                    'language' => 'en-US'
-                ]),
+                $pool->as('movie')->timeout(5)->get("{$baseUrlTmdb}/genre/movie/list", ['api_key' => $apiKey, 'language' => 'en-US']),
+                $pool->as('tv')->timeout(5)->get("{$baseUrlTmdb}/genre/tv/list", ['api_key' => $apiKey, 'language' => 'en-US']),
             ]);
 
             $tmdbMovie = $responses['movie']->successful() ? $responses['movie']->json()['genres'] : [];
@@ -61,20 +52,17 @@ class CategoryController extends Controller
                 ];
             }
         } catch (\Exception $e) {
-            Log::error('TMDB API Error: ' . $e->getMessage());
+            Log::error('TMDB Genre Error: ' . $e->getMessage());
         }
 
-        // Fetch Jikan (Anime)
+        // 2. Fetch Jikan
         try {
             $resJikan = Http::timeout(5)->get("{$baseUrlJikan}/genres/anime");
-
             /** @var Response $resJikan */
             if ($resJikan->successful()) {
                 $jikanGenres = $resJikan->json()['data'] ?? [];
-
                 foreach ($jikanGenres as $genre) {
                     $name = $genre['name'];
-
                     if (isset($finalGenres[$name])) {
                         $finalGenres[$name]['jikan_id'] = $genre['mal_id'];
                     } else {
@@ -87,7 +75,7 @@ class CategoryController extends Controller
                 }
             }
         } catch (\Exception $e) {
-            Log::error('Jikan API Error: ' . $e->getMessage());
+            Log::error('Jikan Genre Error: ' . $e->getMessage());
         }
 
         ksort($finalGenres);
@@ -96,10 +84,126 @@ class CategoryController extends Controller
 
     public function show(Request $request, $name)
     {
+        $tmdbId  = $request->query('tmdb_id');
+        $jikanId = $request->query('jikan_id');
+        $apiKey  = config('services.tmdb.api_key') ?? env('TMDB_API_KEY');
+
+        $movies = [];
+        $tvShows = [];
+        $animes = [];
+
+        // ================= TMDB (Movie & TV with Fallback) =================
+        if ($tmdbId) {
+            try {
+                // Kita gunakan POOL untuk mengambil data INDO dan INGGRIS secara bersamaan
+                // Ini mencegah loading lama (paralel processing)
+                $responses = Http::pool(fn($pool) => [
+                    // Request Movie (Indo & English)
+                    $pool->as('movie_id')->get('https://api.themoviedb.org/3/discover/movie', [
+                        'api_key' => $apiKey,
+                        'with_genres' => $tmdbId,
+                        'language' => 'id-ID'
+                    ]),
+                    $pool->as('movie_en')->get('https://api.themoviedb.org/3/discover/movie', [
+                        'api_key' => $apiKey,
+                        'with_genres' => $tmdbId,
+                        'language' => 'en-US'
+                    ]),
+
+                    // Request TV (Indo & English)
+                    $pool->as('tv_id')->get('https://api.themoviedb.org/3/discover/tv', [
+                        'api_key' => $apiKey,
+                        'with_genres' => $tmdbId,
+                        'language' => 'id-ID'
+                    ]),
+                    $pool->as('tv_en')->get('https://api.themoviedb.org/3/discover/tv', [
+                        'api_key' => $apiKey,
+                        'with_genres' => $tmdbId,
+                        'language' => 'en-US'
+                    ]),
+                ]);
+
+                // Proses Data Movie
+                if ($responses['movie_id']->successful() && $responses['movie_en']->successful()) {
+                    $movies = $this->mergeLanguage(
+                        $responses['movie_id']->json()['results'],
+                        $responses['movie_en']->json()['results']
+                    );
+
+                    // Tandai type
+                    foreach ($movies as &$m) $m['media_type'] = 'movie';
+                }
+
+                // Proses Data TV
+                if ($responses['tv_id']->successful() && $responses['tv_en']->successful()) {
+                    $tvShows = $this->mergeLanguage(
+                        $responses['tv_id']->json()['results'],
+                        $responses['tv_en']->json()['results']
+                    );
+
+                    // Tandai type
+                    foreach ($tvShows as &$t) $t['media_type'] = 'tv';
+                }
+            } catch (\Exception $e) {
+                Log::error('TMDB Discover Error: ' . $e->getMessage());
+            }
+        }
+
+        // ================= JIKAN (Anime) =================
+        // Jikan API defaultnya Inggris, tidak support 'id-ID' secara native
+        if ($jikanId) {
+            try {
+                $animeRes = Http::timeout(5)->get('https://api.jikan.moe/v4/anime', [
+                    'genres' => $jikanId,
+                    'order_by' => 'popularity' // Tambahkan sort biar rapi
+                ]);
+
+                /** @var Response $animeRes */
+                if ($animeRes->successful()) {
+                    $animes = $animeRes->json()['data'] ?? [];
+                    // Tandai type
+                    foreach ($animes as &$a) $a['media_type'] = 'anime';
+                }
+            } catch (\Exception $e) {
+                Log::error('Jikan Discover Error: ' . $e->getMessage());
+            }
+        }
+
+        // Gabungkan semua konten
+        $mixedContent = collect($movies)
+            ->merge($tvShows)
+            ->merge($animes)
+            ->sortByDesc(fn($item) => $item['popularity'] ?? 0) // Sort popularity gabungan
+            ->values(); // Reset array keys
+
         return view('categories.show', [
-            'name' => $name,
-            'tmdb_id' => $request->query('tmdb_id'),
-            'jikan_id' => $request->query('jikan_id')
+            'genreName' => $name,
+            'content' => $mixedContent
         ]);
+    }
+
+    /**
+     * Fungsi Helper untuk menggabungkan data Indo dan Inggris
+     * Jika Overview Indo kosong, pakai Overview Inggris
+     */
+    private function mergeLanguage($indoList, $englishList)
+    {
+        // Ubah list Inggris jadi Key-Value pair berdasarkan ID biar gampang dicari
+        // [123 => DataFilmInggris, 456 => DataFilmInggris]
+        $englishMap = collect($englishList)->keyBy('id');
+
+        foreach ($indoList as &$item) {
+            // Cek apakah overview kosong atau null
+            if (empty($item['overview'])) {
+                // Ambil overview dari data Inggris jika ada
+                if (isset($englishMap[$item['id']])) {
+                    $item['overview'] = $englishMap[$item['id']]['overview'];
+                } else {
+                    $item['overview'] = 'Tidak ada deskripsi.';
+                }
+            }
+        }
+
+        return $indoList;
     }
 }
