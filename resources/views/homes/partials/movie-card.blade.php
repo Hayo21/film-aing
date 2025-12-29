@@ -4,7 +4,6 @@
     // 1. Tentukan ID dan Route URL
     if ($type === 'movie') {
         $id = $item['id'] ?? 0;
-        // Kita gunakan route() helper, pastikan route-nya sudah dibuat di web.php
         $url = route('movie.detail', $id);
 
         $image = 'https://image.tmdb.org/t/p/w500' . ($item['poster_path'] ?? '');
@@ -14,6 +13,26 @@
         $year = isset($item['release_date']) ? date('Y', strtotime($item['release_date'])) : 'N/A';
         $genreIds = $item['genre_ids'] ?? [];
         $badgeColor = 'bg-red-600/80';
+        $hoverColor = 'group-hover:text-red-500';
+        $typeBadge = 'MOVIE';
+
+        $genreMap = App\Http\Controllers\HomeController::getGenreMap();
+        $genres = array_map(fn($id) => $genreMap[$id] ?? 'Other', array_slice($genreIds, 0, 3));
+    } elseif ($type === 'tv') {
+        // TV Series
+        $id = $item['id'] ?? 0;
+        $url = route('tv.detail', $id); // Pastikan route tv.detail sudah ada
+
+        $image = 'https://image.tmdb.org/t/p/w500' . ($item['poster_path'] ?? '');
+        $title = $item['name'] ?? 'Unknown TV';
+        $rating = $item['vote_average'] ?? 0;
+        $description = $item['overview'] ?? '';
+        $year = isset($item['first_air_date']) ? date('Y', strtotime($item['first_air_date'])) : 'N/A';
+        $episodes = '?'; // TV series dari discover tidak ada info episodes
+        $genreIds = $item['genre_ids'] ?? [];
+        $badgeColor = 'bg-blue-600/80';
+        $hoverColor = 'group-hover:text-blue-500';
+        $typeBadge = 'TV';
 
         $genreMap = App\Http\Controllers\HomeController::getGenreMap();
         $genres = array_map(fn($id) => $genreMap[$id] ?? 'Other', array_slice($genreIds, 0, 3));
@@ -29,6 +48,8 @@
         $year = $item['year'] ?? 'N/A';
         $episodes = $item['episodes'] ?? '?';
         $badgeColor = 'bg-purple-600/80';
+        $hoverColor = 'group-hover:text-purple-500';
+        $typeBadge = 'ANIME';
 
         $genreObjects = $item['genres'] ?? [];
         $genres = array_map(fn($g) => $g['name'], array_slice($genreObjects, 0, 3));
@@ -50,10 +71,17 @@
 {{-- 2. Bungkus Card dengan tag <a> --}}
 <a href="{{ $url }}" class="block group h-full">
     <div
-        class="movie-card bg-gray-800 rounded-lg shadow-lg cursor-pointer h-full flex flex-col transition-transform duration-300 group-hover:-translate-y-2">
+        class="movie-card bg-gray-800 rounded-lg shadow-lg cursor-pointer h-full flex flex-col transition-transform duration-300 group-hover:-translate-y-2 relative">
+
+        {{-- Badge Type (MOVIE/TV/ANIME) --}}
+        <div class="absolute top-2 right-2 z-10">
+            <span class="text-[10px] font-bold text-white px-2 py-0.5 rounded shadow-sm {{ $badgeColor }}">
+                {{ $typeBadge }}
+            </span>
+        </div>
 
         {{-- Poster Image Wrapper --}}
-        <div class="relative aspect-[2/3] overflow-hidden rounded-t-lg">
+        <div class="relative aspect-[2/3] overflow-hidden rounded-t-lg bg-gray-900">
             <img src="{{ $image }}" alt="{{ $title }}"
                 class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" loading="lazy"
                 onerror="this.src='https://via.placeholder.com/500x750?text=No+Image'">
@@ -68,13 +96,15 @@
                     </h3>
 
                     {{-- Rating --}}
-                    <div class="flex items-center gap-2 mb-2">
-                        <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
-                            <path
-                                d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                        </svg>
-                        <span class="text-white font-semibold">{{ number_format((float) $rating, 1) }}</span>
-                    </div>
+                    @if ($rating > 0)
+                        <div class="flex items-center gap-2 mb-2">
+                            <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                                <path
+                                    d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                            </svg>
+                            <span class="text-white font-semibold">{{ number_format((float) $rating, 1) }}</span>
+                        </div>
+                    @endif
 
                     {{-- Synopsis --}}
                     <p class="text-gray-300 text-xs mb-3 line-clamp-3">
@@ -97,11 +127,13 @@
 
         {{-- Title (Always Visible) --}}
         <div class="p-3 flex-grow bg-gray-900 rounded-b-lg">
-            <h3 class="text-white font-semibold text-sm line-clamp-2 group-hover:text-red-500 transition-colors">
+            <h3 class="text-white font-semibold text-sm line-clamp-2 {{ $hoverColor }} transition-colors">
                 {{ $title }}
             </h3>
             <p class="text-gray-400 text-xs mt-1">
                 @if ($type === 'movie')
+                    {{ $year }}
+                @elseif ($type === 'tv')
                     {{ $year }}
                 @else
                     {{ $year }} • {{ $episodes }} Eps
