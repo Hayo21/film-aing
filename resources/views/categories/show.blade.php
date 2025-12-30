@@ -167,6 +167,7 @@
                             $hoverColor = 'text-white';
                             $badgeColor = 'bg-gray-600';
                             $genres = [];
+                            $detailUrl = '#'; // Default URL
 
                             // 1. Jika MOVIE
                             if ($type === 'movie') {
@@ -178,6 +179,7 @@
                                 $overview = $item['overview'] ?? '';
                                 $hoverColor = 'group-hover:text-red-500';
                                 $badgeColor = 'bg-red-600/80';
+                                $detailUrl = route('homes.detail-movie', ['id' => $id]);
 
                                 // Get genres dari genre_ids
                                 $genreIds = $item['genre_ids'] ?? [];
@@ -196,6 +198,8 @@
                                 $overview = $item['overview'] ?? '';
                                 $hoverColor = 'group-hover:text-blue-500';
                                 $badgeColor = 'bg-blue-600/80';
+                                // Jika Anda punya route untuk TV series detail, ganti dengan route yang sesuai
+                                $detailUrl = route('homes.detail-movie', ['id' => $id]); // atau route khusus TV
 
                                 // Get genres dari genre_ids
                                 $genreIds = $item['genre_ids'] ?? [];
@@ -214,6 +218,7 @@
                                 $overview = $item['synopsis'] ?? '';
                                 $hoverColor = 'group-hover:text-purple-500';
                                 $badgeColor = 'bg-purple-600/80';
+                                $detailUrl = route('homes.detail-anime', ['id' => $id]);
 
                                 // Get genres dari genres array (Jikan API)
                                 $genreObjects = $item['genres'] ?? [];
@@ -232,73 +237,76 @@
                             }
                         @endphp
 
-                        <div
-                            class="movie-card bg-gray-800 rounded-lg shadow-lg cursor-pointer h-full flex flex-col group relative">
+                        {{-- Wrap card dengan link --}}
+                        <a href="{{ $detailUrl }}" class="block">
+                            <div
+                                class="movie-card bg-gray-800 rounded-lg shadow-lg cursor-pointer h-full flex flex-col group relative">
 
-                            {{-- Badge Tipe Media --}}
-                            <div class="absolute top-2 right-2 z-10">
-                                <span
-                                    class="text-[10px] font-bold text-white px-2 py-0.5 rounded shadow-sm {{ $badgeColor }}">
-                                    {{ strtoupper($type) }}
-                                </span>
-                            </div>
+                                {{-- Badge Tipe Media --}}
+                                <div class="absolute top-2 right-2 z-10">
+                                    <span
+                                        class="text-[10px] font-bold text-white px-2 py-0.5 rounded shadow-sm {{ $badgeColor }}">
+                                        {{ strtoupper($type) }}
+                                    </span>
+                                </div>
 
-                            {{-- Poster Image --}}
-                            <div class="relative aspect-[2/3] overflow-hidden rounded-t-lg bg-gray-900">
-                                <img src="{{ $image }}" alt="{{ $title }}"
-                                    class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                                    loading="lazy"
-                                    onerror="this.src='https://via.placeholder.com/500x750?text=No+Image'">
+                                {{-- Poster Image --}}
+                                <div class="relative aspect-[2/3] overflow-hidden rounded-t-lg bg-gray-900">
+                                    <img src="{{ $image }}" alt="{{ $title }}"
+                                        class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                                        loading="lazy"
+                                        onerror="this.src='https://via.placeholder.com/500x750?text=No+Image'">
 
-                                {{-- Overlay on Hover --}}
-                                <div class="movie-card-overlay">
-                                    <div class="movie-card-content">
-                                        <h3 class="text-white font-bold text-lg mb-2 line-clamp-2 leading-tight">
-                                            {{ $title }}
-                                        </h3>
+                                    {{-- Overlay on Hover --}}
+                                    <div class="movie-card-overlay">
+                                        <div class="movie-card-content">
+                                            <h3 class="text-white font-bold text-lg mb-2 line-clamp-2 leading-tight">
+                                                {{ $title }}
+                                            </h3>
 
-                                        {{-- Rating --}}
-                                        @if ($rating > 0)
-                                            <div class="flex items-center gap-2 mb-2">
-                                                <svg class="w-5 h-5 text-yellow-400" fill="currentColor"
-                                                    viewBox="0 0 20 20">
-                                                    <path
-                                                        d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                                                </svg>
-                                                <span
-                                                    class="text-white font-semibold">{{ number_format($rating, 1) }}</span>
-                                            </div>
-                                        @endif
-
-                                        {{-- Synopsis --}}
-                                        <p class="text-gray-300 text-xs mb-3 line-clamp-3">
-                                            {{ $shortDesc }}
-                                        </p>
-
-                                        {{-- Genres / Categories --}}
-                                        @if (!empty($genres))
-                                            <div class="flex flex-wrap gap-1">
-                                                @foreach ($genres as $genre)
+                                            {{-- Rating --}}
+                                            @if ($rating > 0)
+                                                <div class="flex items-center gap-2 mb-2">
+                                                    <svg class="w-5 h-5 text-yellow-400" fill="currentColor"
+                                                        viewBox="0 0 20 20">
+                                                        <path
+                                                            d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                                    </svg>
                                                     <span
-                                                        class="px-2 py-1 {{ $badgeColor }} text-white text-[10px] rounded">
-                                                        {{ $genre }}
-                                                    </span>
-                                                @endforeach
-                                            </div>
-                                        @endif
+                                                        class="text-white font-semibold">{{ number_format($rating, 1) }}</span>
+                                                </div>
+                                            @endif
+
+                                            {{-- Synopsis --}}
+                                            <p class="text-gray-300 text-xs mb-3 line-clamp-3">
+                                                {{ $shortDesc }}
+                                            </p>
+
+                                            {{-- Genres / Categories --}}
+                                            @if (!empty($genres))
+                                                <div class="flex flex-wrap gap-1">
+                                                    @foreach ($genres as $genre)
+                                                        <span
+                                                            class="px-2 py-1 {{ $badgeColor }} text-white text-[10px] rounded">
+                                                            {{ $genre }}
+                                                        </span>
+                                                    @endforeach
+                                                </div>
+                                            @endif
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
 
-                            {{-- Title (Always Visible) --}}
-                            <div class="p-3 flex-grow bg-gray-900 rounded-b-lg">
-                                <h3
-                                    class="text-white font-semibold text-sm line-clamp-2 {{ $hoverColor }} transition-colors">
-                                    {{ $title }}
-                                </h3>
-                                <p class="text-gray-400 text-xs mt-1">{{ $year }}</p>
+                                {{-- Title (Always Visible) --}}
+                                <div class="p-3 flex-grow bg-gray-900 rounded-b-lg">
+                                    <h3
+                                        class="text-white font-semibold text-sm line-clamp-2 {{ $hoverColor }} transition-colors">
+                                        {{ $title }}
+                                    </h3>
+                                    <p class="text-gray-400 text-xs mt-1">{{ $year }}</p>
+                                </div>
                             </div>
-                        </div>
+                        </a>
                     @endforeach
                 </div>
             </section>

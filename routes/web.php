@@ -6,6 +6,7 @@ use App\Http\Controllers\EntertainmentController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\CategoryController;
 
+
 // tes api
 // Route::get('/test-api', [EntertainmentController::class, 'test']);
 
@@ -29,6 +30,10 @@ Route::get('/about', fn() => view('about.about'))->name('about');
 // route info selengkapnya untuk card
 Route::get('/movie/{id}', [HomeController::class, 'showMovie'])->name('movie.detail');
 Route::get('/anime/{id}', [HomeController::class, 'showAnime'])->name('anime.detail');
+
+// 
+Route::get('/detail-movie/{id}', [HomeController::class, 'showMovie'])->name('homes.detail-movie');
+Route::get('/detail-anime/{id}', [HomeController::class, 'showAnime'])->name('homes.detail-anime');
 
 // di bawah adalah bagian login bawaan dari laravel breeze
 // Route::get('/dashboard', function () {
