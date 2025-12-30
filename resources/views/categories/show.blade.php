@@ -12,7 +12,6 @@
             background-color: #0F172A;
         }
 
-        /* === CARD HOVER EFFECTS (sama seperti home) === */
         .movie-card {
             position: relative;
             overflow: hidden;
@@ -48,7 +47,6 @@
             transform: translateY(0);
         }
 
-        /* === PAGE HEADER ANIMATION === */
         @keyframes fadeInDown {
             from {
                 opacity: 0;
@@ -65,7 +63,6 @@
             animation: fadeInDown 0.6s ease-out;
         }
 
-        /* === CARD LOADING ANIMATION === */
         @keyframes fadeInUp {
             from {
                 opacity: 0;
@@ -88,7 +85,6 @@
 
     <x-navbar />
 
-
     {{-- PAGE HEADER --}}
     <div
         class="relative w-full
@@ -110,6 +106,9 @@
                 <p class="text-gray-400 text-lg md:text-xl">
                     Mixed Collection: Movies, TV Series & Anime
                 </p>
+                <p class="text-gray-500 text-sm mt-2">
+                    Showing {{ $content->count() }} of {{ $total }} results
+                </p>
             </div>
         </div>
     </div>
@@ -123,7 +122,6 @@
 
                     @foreach ($content as $item)
                         @php
-                            // === GENRE MAP untuk TMDB ===
                             $genreMap = [
                                 28 => 'Action',
                                 12 => 'Adventure',
@@ -154,12 +152,10 @@
                                 10768 => 'War & Politics',
                             ];
 
-                            // === LOGIKA UNTUK MENENTUKAN DATA BERDASARKAN TIPE ===
                             $type = $item['media_type'] ?? 'movie';
                             $id = $item['id'] ?? ($item['mal_id'] ?? 0);
                             $rating = $item['vote_average'] ?? ($item['score'] ?? 0);
 
-                            // Default Values
                             $title = 'Unknown';
                             $image = '';
                             $year = 'N/A';
@@ -167,9 +163,8 @@
                             $hoverColor = 'text-white';
                             $badgeColor = 'bg-gray-600';
                             $genres = [];
-                            $detailUrl = '#'; // Default URL
+                            $detailUrl = '#';
 
-                            // 1. Jika MOVIE
                             if ($type === 'movie') {
                                 $title = $item['title'] ?? 'Unknown Movie';
                                 $image = 'https://image.tmdb.org/t/p/w500' . ($item['poster_path'] ?? '');
@@ -181,15 +176,12 @@
                                 $badgeColor = 'bg-red-600/80';
                                 $detailUrl = route('homes.detail-movie', ['id' => $id]);
 
-                                // Get genres dari genre_ids
                                 $genreIds = $item['genre_ids'] ?? [];
                                 $genres = array_map(
                                     fn($gid) => $genreMap[$gid] ?? 'Other',
                                     array_slice($genreIds, 0, 3),
                                 );
-                            }
-                            // 2. Jika TV
-                            elseif ($type === 'tv') {
+                            } elseif ($type === 'tv') {
                                 $title = $item['name'] ?? 'Unknown TV';
                                 $image = 'https://image.tmdb.org/t/p/w500' . ($item['poster_path'] ?? '');
                                 $year = isset($item['first_air_date'])
@@ -198,18 +190,14 @@
                                 $overview = $item['overview'] ?? '';
                                 $hoverColor = 'group-hover:text-blue-500';
                                 $badgeColor = 'bg-blue-600/80';
-                                // Jika Anda punya route untuk TV series detail, ganti dengan route yang sesuai
-                                $detailUrl = route('homes.detail-movie', ['id' => $id]); // atau route khusus TV
+                                $detailUrl = route('homes.detail-movie', ['id' => $id]);
 
-                                // Get genres dari genre_ids
                                 $genreIds = $item['genre_ids'] ?? [];
                                 $genres = array_map(
                                     fn($gid) => $genreMap[$gid] ?? 'Other',
                                     array_slice($genreIds, 0, 3),
                                 );
-                            }
-                            // 3. Jika ANIME
-                            elseif ($type === 'anime') {
+                            } elseif ($type === 'anime') {
                                 $title = $item['title'] ?? 'Unknown Anime';
                                 $image =
                                     $item['images']['jpg']['large_image_url'] ??
@@ -220,12 +208,10 @@
                                 $badgeColor = 'bg-purple-600/80';
                                 $detailUrl = route('homes.detail-anime', ['id' => $id]);
 
-                                // Get genres dari genres array (Jikan API)
                                 $genreObjects = $item['genres'] ?? [];
                                 $genres = array_map(fn($g) => $g['name'], array_slice($genreObjects, 0, 3));
                             }
 
-                            // Limit overview untuk synopsis
                             $words = explode(' ', trim($overview));
                             $wordCount = count($words);
                             if ($wordCount === 0 || empty($overview)) {
@@ -237,12 +223,9 @@
                             }
                         @endphp
 
-                        {{-- Wrap card dengan link --}}
                         <a href="{{ $detailUrl }}" class="block">
                             <div
                                 class="movie-card bg-gray-800 rounded-lg shadow-lg cursor-pointer h-full flex flex-col group relative">
-
-                                {{-- Badge Tipe Media --}}
                                 <div class="absolute top-2 right-2 z-10">
                                     <span
                                         class="text-[10px] font-bold text-white px-2 py-0.5 rounded shadow-sm {{ $badgeColor }}">
@@ -250,21 +233,18 @@
                                     </span>
                                 </div>
 
-                                {{-- Poster Image --}}
                                 <div class="relative aspect-[2/3] overflow-hidden rounded-t-lg bg-gray-900">
                                     <img src="{{ $image }}" alt="{{ $title }}"
                                         class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                                         loading="lazy"
                                         onerror="this.src='https://via.placeholder.com/500x750?text=No+Image'">
 
-                                    {{-- Overlay on Hover --}}
                                     <div class="movie-card-overlay">
                                         <div class="movie-card-content">
                                             <h3 class="text-white font-bold text-lg mb-2 line-clamp-2 leading-tight">
                                                 {{ $title }}
                                             </h3>
 
-                                            {{-- Rating --}}
                                             @if ($rating > 0)
                                                 <div class="flex items-center gap-2 mb-2">
                                                     <svg class="w-5 h-5 text-yellow-400" fill="currentColor"
@@ -277,12 +257,10 @@
                                                 </div>
                                             @endif
 
-                                            {{-- Synopsis --}}
                                             <p class="text-gray-300 text-xs mb-3 line-clamp-3">
                                                 {{ $shortDesc }}
                                             </p>
 
-                                            {{-- Genres / Categories --}}
                                             @if (!empty($genres))
                                                 <div class="flex flex-wrap gap-1">
                                                     @foreach ($genres as $genre)
@@ -297,7 +275,6 @@
                                     </div>
                                 </div>
 
-                                {{-- Title (Always Visible) --}}
                                 <div class="p-3 flex-grow bg-gray-900 rounded-b-lg">
                                     <h3
                                         class="text-white font-semibold text-sm line-clamp-2 {{ $hoverColor }} transition-colors">
@@ -309,6 +286,91 @@
                         </a>
                     @endforeach
                 </div>
+
+                {{-- PAGINATION --}}
+                @if ($totalPages > 1)
+                    <div class="mt-12 flex flex-col sm:flex-row items-center justify-between gap-4">
+
+                        {{-- Previous Button --}}
+                        @if ($hasPrev)
+                            <a href="{{ request()->fullUrlWithQuery(['page' => $currentPage - 1]) }}"
+                                class="px-6 py-3 bg-gray-700 hover:bg-gray-600 text-white font-semibold rounded-lg transition flex items-center gap-2">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M15 19l-7-7 7-7" />
+                                </svg>
+                                Previous
+                            </a>
+                        @else
+                            <div
+                                class="px-6 py-3 bg-gray-800 text-gray-500 font-semibold rounded-lg cursor-not-allowed flex items-center gap-2">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M15 19l-7-7 7-7" />
+                                </svg>
+                                Previous
+                            </div>
+                        @endif
+
+                        {{-- Page Numbers --}}
+                        <div class="flex items-center gap-2">
+                            @php
+                                $start = max(1, $currentPage - 2);
+                                $end = min($totalPages, $currentPage + 2);
+                            @endphp
+
+                            @if ($start > 1)
+                                <a href="{{ request()->fullUrlWithQuery(['page' => 1]) }}"
+                                    class="w-10 h-10 flex items-center justify-center bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition">
+                                    1
+                                </a>
+                                @if ($start > 2)
+                                    <span class="text-gray-500">...</span>
+                                @endif
+                            @endif
+
+                            @for ($i = $start; $i <= $end; $i++)
+                                <a href="{{ request()->fullUrlWithQuery(['page' => $i]) }}"
+                                    class="w-10 h-10 flex items-center justify-center rounded-lg transition
+                                    {{ $i == $currentPage ? 'bg-red-600 text-white font-bold' : 'bg-gray-700 hover:bg-gray-600 text-white' }}">
+                                    {{ $i }}
+                                </a>
+                            @endfor
+
+                            @if ($end < $totalPages)
+                                @if ($end < $totalPages - 1)
+                                    <span class="text-gray-500">...</span>
+                                @endif
+                                <a href="{{ request()->fullUrlWithQuery(['page' => $totalPages]) }}"
+                                    class="w-10 h-10 flex items-center justify-center bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition">
+                                    {{ $totalPages }}
+                                </a>
+                            @endif
+                        </div>
+
+                        {{-- Next Button --}}
+                        @if ($hasMore)
+                            <a href="{{ request()->fullUrlWithQuery(['page' => $currentPage + 1]) }}"
+                                class="px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg transition flex items-center gap-2">
+                                Next
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 5l7 7-7 7" />
+                                </svg>
+                            </a>
+                        @else
+                            <div
+                                class="px-6 py-3 bg-gray-800 text-gray-500 font-semibold rounded-lg cursor-not-allowed flex items-center gap-2">
+                                Next
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 5l7 7-7 7" />
+                                </svg>
+                            </div>
+                        @endif
+
+                    </div>
+                @endif
             </section>
         @else
             {{-- EMPTY STATE --}}

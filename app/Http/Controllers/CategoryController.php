@@ -88,6 +88,10 @@ class CategoryController extends Controller
         $jikanId = $request->query('jikan_id');
         $apiKey  = config('services.tmdb.api_key') ?? env('TMDB_API_KEY');
 
+        // Get page number from request (default: 1)
+        $page = (int) $request->query('page', 1);
+        $perPage = 24; // Items per page
+
         $movies = [];
         $tvShows = [];
         $animes = [];
@@ -95,31 +99,33 @@ class CategoryController extends Controller
         // ================= TMDB (Movie & TV with Fallback) =================
         if ($tmdbId) {
             try {
-                // Kita gunakan POOL untuk mengambil data INDO dan INGGRIS secara bersamaan
-                // Ini mencegah loading lama (paralel processing)
                 $responses = Http::pool(fn($pool) => [
                     // Request Movie (Indo & English)
                     $pool->as('movie_id')->get('https://api.themoviedb.org/3/discover/movie', [
                         'api_key' => $apiKey,
                         'with_genres' => $tmdbId,
-                        'language' => 'id-ID'
+                        'language' => 'id-ID',
+                        'page' => $page
                     ]),
                     $pool->as('movie_en')->get('https://api.themoviedb.org/3/discover/movie', [
                         'api_key' => $apiKey,
                         'with_genres' => $tmdbId,
-                        'language' => 'en-US'
+                        'language' => 'en-US',
+                        'page' => $page
                     ]),
 
                     // Request TV (Indo & English)
                     $pool->as('tv_id')->get('https://api.themoviedb.org/3/discover/tv', [
                         'api_key' => $apiKey,
                         'with_genres' => $tmdbId,
-                        'language' => 'id-ID'
+                        'language' => 'id-ID',
+                        'page' => $page
                     ]),
                     $pool->as('tv_en')->get('https://api.themoviedb.org/3/discover/tv', [
                         'api_key' => $apiKey,
                         'with_genres' => $tmdbId,
-                        'language' => 'en-US'
+                        'language' => 'en-US',
+                        'page' => $page
                     ]),
                 ]);
 
@@ -130,7 +136,6 @@ class CategoryController extends Controller
                         $responses['movie_en']->json()['results']
                     );
 
-                    // Tandai type
                     foreach ($movies as &$m) $m['media_type'] = 'movie';
                 }
 
@@ -141,7 +146,6 @@ class CategoryController extends Controller
                         $responses['tv_en']->json()['results']
                     );
 
-                    // Tandai type
                     foreach ($tvShows as &$t) $t['media_type'] = 'tv';
                 }
             } catch (\Exception $e) {
@@ -150,18 +154,17 @@ class CategoryController extends Controller
         }
 
         // ================= JIKAN (Anime) =================
-        // Jikan API defaultnya Inggris, tidak support 'id-ID' secara native
         if ($jikanId) {
             try {
                 $animeRes = Http::timeout(5)->get('https://api.jikan.moe/v4/anime', [
                     'genres' => $jikanId,
-                    'order_by' => 'popularity' // Tambahkan sort biar rapi
+                    'order_by' => 'popularity',
+                    'page' => $page
                 ]);
 
                 /** @var Response $animeRes */
                 if ($animeRes->successful()) {
                     $animes = $animeRes->json()['data'] ?? [];
-                    // Tandai type
                     foreach ($animes as &$a) $a['media_type'] = 'anime';
                 }
             } catch (\Exception $e) {
@@ -170,32 +173,37 @@ class CategoryController extends Controller
         }
 
         // Gabungkan semua konten
-        $mixedContent = collect($movies)
+        $allContent = collect($movies)
             ->merge($tvShows)
             ->merge($animes)
-            ->sortByDesc(fn($item) => $item['popularity'] ?? 0) // Sort popularity gabungan
-            ->values(); // Reset array keys
+            ->sortByDesc(fn($item) => $item['popularity'] ?? 0);
+
+        // Manual Pagination
+        $total = $allContent->count();
+        $content = $allContent->forPage($page, $perPage)->values();
+
+        // Calculate pagination info
+        $totalPages = ceil($total / $perPage);
+        $hasMore = $page < $totalPages;
+        $hasPrev = $page > 1;
 
         return view('categories.show', [
             'genreName' => $name,
-            'content' => $mixedContent
+            'content' => $content,
+            'currentPage' => $page,
+            'totalPages' => $totalPages,
+            'hasMore' => $hasMore,
+            'hasPrev' => $hasPrev,
+            'total' => $total
         ]);
     }
 
-    /**
-     * Fungsi Helper untuk menggabungkan data Indo dan Inggris
-     * Jika Overview Indo kosong, pakai Overview Inggris
-     */
     private function mergeLanguage($indoList, $englishList)
     {
-        // Ubah list Inggris jadi Key-Value pair berdasarkan ID biar gampang dicari
-        // [123 => DataFilmInggris, 456 => DataFilmInggris]
         $englishMap = collect($englishList)->keyBy('id');
 
         foreach ($indoList as &$item) {
-            // Cek apakah overview kosong atau null
             if (empty($item['overview'])) {
-                // Ambil overview dari data Inggris jika ada
                 if (isset($englishMap[$item['id']])) {
                     $item['overview'] = $englishMap[$item['id']]['overview'];
                 } else {
