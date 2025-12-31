@@ -24,7 +24,7 @@ Route::get('/categories/{name}', [CategoryController::class, 'show'])
     ->name('categories.show');
 
 // halaman statis
-Route::get('/films', fn() => view('films.films'))->name('films');
+Route::get('/fordis', fn() => view('fordis.fordis'))->name('fordis');
 Route::get('/about', fn() => view('about.about'))->name('about');
 
 // route info selengkapnya untuk card

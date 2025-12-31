@@ -30,7 +30,7 @@ class EntertainmentController extends Controller
 
         // 3. Ambil Data TMDB (Dengan Pengaman)
         try {
-            $apiKey = env('TMDB_API_KEY');
+            $apiKey = config('services.tmdb.api_key') ?? env('TMDB_API_KEY');
 
             // Cek API Key dulu
             if ($apiKey) {
