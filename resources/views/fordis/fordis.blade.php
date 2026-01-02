@@ -98,13 +98,28 @@
                 <p class="text-sm sm:text-base md:text-lg text-gray-300 mb-4 sm:mb-6">
                     Ngaloco film & anime favorit, share review, dan temukan rekomendasi dari komunitas
                 </p>
-                <button
-                    class="px-4 sm:px-6 py-2.5 sm:py-3 bg-red-600 hover:bg-red-700 text-white text-sm sm:text-base font-semibold rounded-lg transition transform active:scale-95 md:hover:scale-105 flex items-center gap-2">
-                    <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                    </svg>
-                    Buat Diskusi Baru
-                </button>
+
+                {{-- LOGIC TOMBOL BUAT DISKUSI --}}
+                @auth
+                    {{-- Jika Login: Link ke halaman buat diskusi (Ganti href dengan route yang sesuai) --}}
+                    <a href="#"
+                        class="inline-flex px-4 sm:px-6 py-2.5 sm:py-3 bg-red-600 hover:bg-red-700 text-white text-sm sm:text-base font-semibold rounded-lg transition transform active:scale-95 md:hover:scale-105 items-center gap-2">
+                        <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                        </svg>
+                        Buat Diskusi Baru
+                    </a>
+                @else
+                    {{-- Jika Belum Login: Link ke Halaman Login --}}
+                    <a href="{{ route('login') }}"
+                        class="inline-flex px-4 sm:px-6 py-2.5 sm:py-3 bg-red-600 hover:bg-red-700 text-white text-sm sm:text-base font-semibold rounded-lg transition transform active:scale-95 md:hover:scale-105 items-center gap-2">
+                        <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+                        </svg>
+                        Login untuk Diskusi
+                    </a>
+                @endauth
             </div>
         </div>
     </div>
@@ -182,30 +197,64 @@
                                     <span class="hidden sm:inline">•</span>
                                     <span>2 jam lalu</span>
                                 </div>
+
+                                {{-- ACTION BUTTONS (LIKE & COMMENT) DENGAN LOGIKA AUTH --}}
                                 <div class="flex items-center gap-3 sm:gap-4 text-xs sm:text-sm">
-                                    <div class="flex items-center gap-1 text-gray-400">
-                                        <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 20 20">
-                                            <path
-                                                d="M2 5a2 2 0 012-2h7a2 2 0 012 2v4a2 2 0 01-2 2H9l-3 3v-3H4a2 2 0 01-2-2V5z" />
-                                        </svg>
-                                        <span class="font-semibold">234</span>
-                                    </div>
-                                    <div class="flex items-center gap-1 text-gray-400">
-                                        <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 20 20">
-                                            <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
-                                            <path fill-rule="evenodd"
-                                                d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"
-                                                clip-rule="evenodd" />
-                                        </svg>
-                                        <span class="font-semibold">1.2k</span>
-                                    </div>
+
+                                    {{-- Tombol Like --}}
+                                    @auth
+                                        <button class="flex items-center gap-1 text-gray-400 hover:text-red-500 transition">
+                                            <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 20 20">
+                                                <path
+                                                    d="M2 5a2 2 0 012-2h7a2 2 0 012 2v4a2 2 0 01-2 2H9l-3 3v-3H4a2 2 0 01-2-2V5z" />
+                                            </svg>
+                                            <span class="font-semibold">234</span>
+                                        </button>
+                                    @else
+                                        <a href="{{ route('login') }}"
+                                            class="flex items-center gap-1 text-gray-400 hover:text-red-500 transition"
+                                            title="Login untuk menyukai">
+                                            <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 20 20">
+                                                <path
+                                                    d="M2 5a2 2 0 012-2h7a2 2 0 012 2v4a2 2 0 01-2 2H9l-3 3v-3H4a2 2 0 01-2-2V5z" />
+                                            </svg>
+                                            <span class="font-semibold">234</span>
+                                        </a>
+                                    @endauth
+
+                                    {{-- Tombol Komentar --}}
+                                    @auth
+                                        <button
+                                            class="flex items-center gap-1 text-gray-400 hover:text-blue-500 transition">
+                                            <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 20 20">
+                                                <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                                                <path fill-rule="evenodd"
+                                                    d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"
+                                                    clip-rule="evenodd" />
+                                            </svg>
+                                            <span class="font-semibold">1.2k</span>
+                                        </button>
+                                    @else
+                                        <a href="{{ route('login') }}"
+                                            class="flex items-center gap-1 text-gray-400 hover:text-blue-500 transition"
+                                            title="Login untuk komentar">
+                                            <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 20 20">
+                                                <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                                                <path fill-rule="evenodd"
+                                                    d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"
+                                                    clip-rule="evenodd" />
+                                            </svg>
+                                            <span class="font-semibold">1.2k</span>
+                                        </a>
+                                    @endauth
+
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                {{-- Regular Discussions --}}
+                {{-- Regular Discussion 1 --}}
                 <div
                     class="discussion-card bg-slate-800/50 border border-gray-700 hover:border-red-500/50 rounded-xl p-4 sm:p-6 backdrop-blur-sm">
                     <div class="flex flex-col sm:flex-row items-start gap-3 sm:gap-4">
@@ -240,32 +289,63 @@
                                     <span class="text-xs sm:text-sm">5 jam lalu</span>
                                 </div>
                                 <div class="flex items-center gap-3 sm:gap-4 text-xs sm:text-sm">
-                                    <div class="flex items-center gap-1 text-gray-400">
-                                        <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 20 20">
-                                            <path
-                                                d="M2 5a2 2 0 012-2h7a2 2 0 012 2v4a2 2 0 01-2 2H9l-3 3v-3H4a2 2 0 01-2-2V5z" />
-                                        </svg>
-                                        <span class="font-semibold">156</span>
-                                    </div>
-                                    <div class="flex items-center gap-1 text-gray-400">
-                                        <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 20 20">
-                                            <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
-                                            <path fill-rule="evenodd"
-                                                d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"
-                                                clip-rule="evenodd" />
-                                        </svg>
-                                        <span class="font-semibold">892</span>
-                                    </div>
+
+                                    {{-- Tombol Like --}}
+                                    @auth
+                                        <button
+                                            class="flex items-center gap-1 text-gray-400 hover:text-red-500 transition">
+                                            <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 20 20">
+                                                <path
+                                                    d="M2 5a2 2 0 012-2h7a2 2 0 012 2v4a2 2 0 01-2 2H9l-3 3v-3H4a2 2 0 01-2-2V5z" />
+                                            </svg>
+                                            <span class="font-semibold">156</span>
+                                        </button>
+                                    @else
+                                        <a href="{{ route('login') }}"
+                                            class="flex items-center gap-1 text-gray-400 hover:text-red-500 transition">
+                                            <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 20 20">
+                                                <path
+                                                    d="M2 5a2 2 0 012-2h7a2 2 0 012 2v4a2 2 0 01-2 2H9l-3 3v-3H4a2 2 0 01-2-2V5z" />
+                                            </svg>
+                                            <span class="font-semibold">156</span>
+                                        </a>
+                                    @endauth
+
+                                    {{-- Tombol Komentar --}}
+                                    @auth
+                                        <button
+                                            class="flex items-center gap-1 text-gray-400 hover:text-blue-500 transition">
+                                            <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 20 20">
+                                                <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                                                <path fill-rule="evenodd"
+                                                    d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"
+                                                    clip-rule="evenodd" />
+                                            </svg>
+                                            <span class="font-semibold">892</span>
+                                        </button>
+                                    @else
+                                        <a href="{{ route('login') }}"
+                                            class="flex items-center gap-1 text-gray-400 hover:text-blue-500 transition">
+                                            <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 20 20">
+                                                <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                                                <path fill-rule="evenodd"
+                                                    d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"
+                                                    clip-rule="evenodd" />
+                                            </svg>
+                                            <span class="font-semibold">892</span>
+                                        </a>
+                                    @endauth
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
+                {{-- Regular Discussion 2 --}}
                 <div
                     class="discussion-card bg-slate-800/50 border border-gray-700 hover:border-red-500/50 rounded-xl p-4 sm:p-6 backdrop-blur-sm">
                     <div class="flex flex-col sm:flex-row items-start gap-3 sm:gap-4">
-                        <img src="https://image.tmdb.org/t/p/w500/qNBAXBIQlnOThrVvA6mA2B5ggV6.jpg" alt="Poster"
+                        <img src="https://image.tmdb.org/t/p/w500/rktDFPbfHfUbArZ6OOOKsXcv0Bm.jpg" alt="Poster"
                             class="w-16 h-24 sm:w-20 sm:h-28 object-cover rounded-lg flex-shrink-0">
                         <div class="flex-1 w-full">
                             <div class="flex items-center gap-2 mb-2">
@@ -296,28 +376,58 @@
                                     <span class="text-xs sm:text-sm">1 hari lalu</span>
                                 </div>
                                 <div class="flex items-center gap-3 sm:gap-4 text-xs sm:text-sm">
-                                    <div class="flex items-center gap-1 text-gray-400">
-                                        <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 20 20">
-                                            <path
-                                                d="M2 5a2 2 0 012-2h7a2 2 0 012 2v4a2 2 0 01-2 2H9l-3 3v-3H4a2 2 0 01-2-2V5z" />
-                                        </svg>
-                                        <span class="font-semibold">89</span>
-                                    </div>
-                                    <div class="flex items-center gap-1 text-gray-400">
-                                        <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 20 20">
-                                            <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
-                                            <path fill-rule="evenodd"
-                                                d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"
-                                                clip-rule="evenodd" />
-                                        </svg>
-                                        <span class="font-semibold">543</span>
-                                    </div>
+                                    {{-- Like Logic --}}
+                                    @auth
+                                        <button
+                                            class="flex items-center gap-1 text-gray-400 hover:text-red-500 transition">
+                                            <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 20 20">
+                                                <path
+                                                    d="M2 5a2 2 0 012-2h7a2 2 0 012 2v4a2 2 0 01-2 2H9l-3 3v-3H4a2 2 0 01-2-2V5z" />
+                                            </svg>
+                                            <span class="font-semibold">89</span>
+                                        </button>
+                                    @else
+                                        <a href="{{ route('login') }}"
+                                            class="flex items-center gap-1 text-gray-400 hover:text-red-500 transition">
+                                            <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 20 20">
+                                                <path
+                                                    d="M2 5a2 2 0 012-2h7a2 2 0 012 2v4a2 2 0 01-2 2H9l-3 3v-3H4a2 2 0 01-2-2V5z" />
+                                            </svg>
+                                            <span class="font-semibold">89</span>
+                                        </a>
+                                    @endauth
+
+                                    {{-- Comment Logic --}}
+                                    @auth
+                                        <button
+                                            class="flex items-center gap-1 text-gray-400 hover:text-blue-500 transition">
+                                            <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 20 20">
+                                                <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                                                <path fill-rule="evenodd"
+                                                    d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"
+                                                    clip-rule="evenodd" />
+                                            </svg>
+                                            <span class="font-semibold">543</span>
+                                        </button>
+                                    @else
+                                        <a href="{{ route('login') }}"
+                                            class="flex items-center gap-1 text-gray-400 hover:text-blue-500 transition">
+                                            <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 20 20">
+                                                <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                                                <path fill-rule="evenodd"
+                                                    d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"
+                                                    clip-rule="evenodd" />
+                                            </svg>
+                                            <span class="font-semibold">543</span>
+                                        </a>
+                                    @endauth
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
+                {{-- Regular Discussion 3 --}}
                 <div
                     class="discussion-card bg-slate-800/50 border border-gray-700 hover:border-red-500/50 rounded-xl p-4 sm:p-6 backdrop-blur-sm">
                     <div class="flex flex-col sm:flex-row items-start gap-3 sm:gap-4">
@@ -352,22 +462,51 @@
                                     <span class="text-xs sm:text-sm">3 hari lalu</span>
                                 </div>
                                 <div class="flex items-center gap-3 sm:gap-4 text-xs sm:text-sm">
-                                    <div class="flex items-center gap-1 text-gray-400">
-                                        <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 20 20">
-                                            <path
-                                                d="M2 5a2 2 0 012-2h7a2 2 0 012 2v4a2 2 0 01-2 2H9l-3 3v-3H4a2 2 0 01-2-2V5z" />
-                                        </svg>
-                                        <span class="font-semibold">312</span>
-                                    </div>
-                                    <div class="flex items-center gap-1 text-gray-400">
-                                        <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 20 20">
-                                            <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
-                                            <path fill-rule="evenodd"
-                                                d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"
-                                                clip-rule="evenodd" />
-                                        </svg>
-                                        <span class="font-semibold">2.1k</span>
-                                    </div>
+                                    {{-- Like Logic --}}
+                                    @auth
+                                        <button
+                                            class="flex items-center gap-1 text-gray-400 hover:text-red-500 transition">
+                                            <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 20 20">
+                                                <path
+                                                    d="M2 5a2 2 0 012-2h7a2 2 0 012 2v4a2 2 0 01-2 2H9l-3 3v-3H4a2 2 0 01-2-2V5z" />
+                                            </svg>
+                                            <span class="font-semibold">312</span>
+                                        </button>
+                                    @else
+                                        <a href="{{ route('login') }}"
+                                            class="flex items-center gap-1 text-gray-400 hover:text-red-500 transition">
+                                            <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 20 20">
+                                                <path
+                                                    d="M2 5a2 2 0 012-2h7a2 2 0 012 2v4a2 2 0 01-2 2H9l-3 3v-3H4a2 2 0 01-2-2V5z" />
+                                            </svg>
+                                            <span class="font-semibold">312</span>
+                                        </a>
+                                    @endauth
+
+                                    {{-- Comment Logic --}}
+                                    @auth
+                                        <button
+                                            class="flex items-center gap-1 text-gray-400 hover:text-blue-500 transition">
+                                            <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 20 20">
+                                                <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                                                <path fill-rule="evenodd"
+                                                    d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"
+                                                    clip-rule="evenodd" />
+                                            </svg>
+                                            <span class="font-semibold">2.1k</span>
+                                        </button>
+                                    @else
+                                        <a href="{{ route('login') }}"
+                                            class="flex items-center gap-1 text-gray-400 hover:text-blue-500 transition">
+                                            <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 20 20">
+                                                <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                                                <path fill-rule="evenodd"
+                                                    d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"
+                                                    clip-rule="evenodd" />
+                                            </svg>
+                                            <span class="font-semibold">2.1k</span>
+                                        </a>
+                                    @endauth
                                 </div>
                             </div>
                         </div>

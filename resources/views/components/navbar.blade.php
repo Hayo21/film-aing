@@ -24,9 +24,9 @@
                    {{ request()->routeIs('home')
                        ? 'text-blue-500 after:absolute after:left-0 after:-bottom-1 after:w-full after:h-0.5 after:bg-blue-500'
                        : 'text-gray-100 hover:text-red-500
-                                                                                                                                                                                                                                                                                                                                          after:absolute after:left-0 after:bottom-0 after:h-0.5 after:w-full
-                                                                                                                                                                                                                                                                                                                                          after:bg-red-500 after:scale-x-0 after:origin-left
-                                                                                                                                                                                                                                                                                                                                          hover:after:scale-x-100 after:transition-transform after:duration-300' }}">
+                                                                                                                                                                                                                                                                                                                                                             after:absolute after:left-0 after:bottom-0 after:h-0.5 after:w-full
+                                                                                                                                                                                                                                                                                                                                                             after:bg-red-500 after:scale-x-0 after:origin-left
+                                                                                                                                                                                                                                                                                                                                                             hover:after:scale-x-100 after:transition-transform after:duration-300' }}">
                     Home
                 </a>
 
@@ -35,9 +35,9 @@
    {{ request()->routeIs('categories.index')
        ? 'text-blue-500 after:absolute after:left-0 after:-bottom-1 after:w-full after:h-0.5 after:bg-blue-500'
        : 'text-gray-100 hover:text-red-500
-                                            after:absolute after:left-0 after:bottom-0 after:h-0.5 after:w-full
-                                            after:bg-red-500 after:scale-x-0 after:origin-left
-                                            hover:after:scale-x-100 after:transition-transform after:duration-300' }}">
+                                               after:absolute after:left-0 after:bottom-0 after:h-0.5 after:w-full
+                                               after:bg-red-500 after:scale-x-0 after:origin-left
+                                               hover:after:scale-x-100 after:transition-transform after:duration-300' }}">
                     Kategori
                 </a>
 
@@ -48,9 +48,9 @@
                    {{ request()->routeIs('fordis')
                        ? 'text-blue-500 after:absolute after:left-0 after:-bottom-1 after:w-full after:h-0.5 after:bg-blue-500'
                        : 'text-gray-100 hover:text-red-500
-                                                                                                                                                                                                                                                                                                                                          after:absolute after:left-0 after:bottom-0 after:h-0.5 after:w-full
-                                                                                                                                                                                                                                                                                                                                          after:bg-red-500 after:scale-x-0 after:origin-left
-                                                                                                                                                                                                                                                                                                                                          hover:after:scale-x-100 after:transition-transform after:duration-300' }}">
+                                                                                                                                                                                                                                                                                                                                                             after:absolute after:left-0 after:bottom-0 after:h-0.5 after:w-full
+                                                                                                                                                                                                                                                                                                                                                             after:bg-red-500 after:scale-x-0 after:origin-left
+                                                                                                                                                                                                                                                                                                                                                             hover:after:scale-x-100 after:transition-transform after:duration-300' }}">
                     Fordis
                 </a>
 
@@ -60,9 +60,9 @@
                    {{ request()->routeIs('about')
                        ? 'text-blue-500 after:absolute after:left-0 after:-bottom-1 after:w-full after:h-0.5 after:bg-blue-500'
                        : 'text-gray-100 hover:text-red-500
-                                                                                                                                                                                                                                                                                                                                          after:absolute after:left-0 after:bottom-0 after:h-0.5 after:w-full
-                                                                                                                                                                                                                                                                                                                                          after:bg-red-500 after:scale-x-0 after:origin-left
-                                                                                                                                                                                                                                                                                                                                          hover:after:scale-x-100 after:transition-transform after:duration-300' }}">
+                                                                                                                                                                                                                                                                                                                                                             after:absolute after:left-0 after:bottom-0 after:h-0.5 after:w-full
+                                                                                                                                                                                                                                                                                                                                                             after:bg-red-500 after:scale-x-0 after:origin-left
+                                                                                                                                                                                                                                                                                                                                                             hover:after:scale-x-100 after:transition-transform after:duration-300' }}">
                     Tentang
                 </a>
 
@@ -121,9 +121,9 @@
                 {{ request()->routeIs('home')
                     ? 'text-blue-500 after:absolute after:left-0 after:bottom-0 after:h-0.5 after:w-full after:bg-blue-500'
                     : 'text-gray-100 hover:text-red-500
-                                                                                                                                                                                                                                                                                       after:absolute after:left-0 after:bottom-0 after:h-0.5 after:w-full
-                                                                                                                                                                                                                                                                                       after:bg-red-500 after:scale-x-0 after:origin-left
-                                                                                                                                                                                                                                                                                       hover:after:scale-x-100 after:transition-transform after:duration-300' }}">
+                                                                                                                                                                                                                                                                                                       after:absolute after:left-0 after:bottom-0 after:h-0.5 after:w-full
+                                                                                                                                                                                                                                                                                                       after:bg-red-500 after:scale-x-0 after:origin-left
+                                                                                                                                                                                                                                                                                                       hover:after:scale-x-100 after:transition-transform after:duration-300' }}">
                 Home
             </a>
 
@@ -133,9 +133,9 @@
                 {{ request()->routeIs('categories.index')
                     ? 'text-blue-500 after:absolute after:left-0 after:bottom-0 after:h-0.5 after:w-full after:bg-blue-500'
                     : 'text-gray-100 hover:text-red-500
-                                                                                                                                                                                                                                                                                       after:absolute after:left-0 after:bottom-0 after:h-0.5 after:w-full
-                                                                                                                                                                                                                                                                                       after:bg-red-500 after:scale-x-0 after:origin-left
-                                                                                                                                                                                                                                                                                       hover:after:scale-x-100 after:transition-transform after:duration-300' }}">
+                                                                                                                                                                                                                                                                                                       after:absolute after:left-0 after:bottom-0 after:h-0.5 after:w-full
+                                                                                                                                                                                                                                                                                                       after:bg-red-500 after:scale-x-0 after:origin-left
+                                                                                                                                                                                                                                                                                                       hover:after:scale-x-100 after:transition-transform after:duration-300' }}">
                 Kategori
             </a>
 
@@ -144,9 +144,9 @@
                 {{ request()->routeIs('fordis')
                     ? 'text-blue-500 after:absolute after:left-0 after:bottom-0 after:h-0.5 after:w-full after:bg-blue-500'
                     : 'text-gray-100 hover:text-red-500
-                                                                                                                                                                                                                                                                                       after:absolute after:left-0 after:bottom-0 after:h-0.5 after:w-full
-                                                                                                                                                                                                                                                                                       after:bg-red-500 after:scale-x-0 after:origin-left
-                                                                                                                                                                                                                                                                                       hover:after:scale-x-100 after:transition-transform after:duration-300' }}">
+                                                                                                                                                                                                                                                                                                       after:absolute after:left-0 after:bottom-0 after:h-0.5 after:w-full
+                                                                                                                                                                                                                                                                                                       after:bg-red-500 after:scale-x-0 after:origin-left
+                                                                                                                                                                                                                                                                                                       hover:after:scale-x-100 after:transition-transform after:duration-300' }}">
                 Fordis
             </a>
 
@@ -156,14 +156,16 @@
                 {{ request()->routeIs('about')
                     ? 'text-blue-500 after:absolute after:left-0 after:bottom-0 after:h-0.5 after:w-full after:bg-blue-500'
                     : 'text-gray-100 hover:text-red-500
-                                                                                                                                                                                                                                                                                       after:absolute after:left-0 after:bottom-0 after:h-0.5 after:w-full
-                                                                                                                                                                                                                                                                                       after:bg-red-500 after:scale-x-0 after:origin-left
-                                                                                                                                                                                                                                                                                       hover:after:scale-x-100 after:transition-transform after:duration-300' }}">
+                                                                                                                                                                                                                                                                                                       after:absolute after:left-0 after:bottom-0 after:h-0.5 after:w-full
+                                                                                                                                                                                                                                                                                                       after:bg-red-500 after:scale-x-0 after:origin-left
+                                                                                                                                                                                                                                                                                                       hover:after:scale-x-100 after:transition-transform after:duration-300' }}">
                 Tentang
             </a>
 
         </div>
     </div>
+
+
 </nav>
 
 <script>
