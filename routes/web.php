@@ -26,9 +26,16 @@ Route::get('/categories/{name}', [CategoryController::class, 'show'])
 
 // Fordis
 Route::get('/fordis', [FordisController::class, 'index'])->name('fordis');
+Route::get('/fordis/{id}', [FordisController::class, 'show'])->name('fordis.show');
+
+Route::middleware('auth')->group(function () {
+    Route::get('/fordis-create', [FordisController::class, 'create'])->name('fordis.create');
+    Route::post('/fordis', [FordisController::class, 'store'])->name('fordis.store');
+    Route::post('/fordis/{id}/like', [FordisController::class, 'toggleLike'])->name('fordis.like');
+    Route::post('/fordis/{id}/comment', [FordisController::class, 'storeComment'])->name('fordis.comment');
+});
 
 // halaman statis
-Route::get('/fordis', fn() => view('fordis.fordis'))->name('fordis');
 Route::get('/about', fn() => view('about.about'))->name('about');
 
 // route info selengkapnya untuk card

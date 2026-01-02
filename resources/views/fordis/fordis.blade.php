@@ -101,8 +101,7 @@
 
                 {{-- LOGIC TOMBOL BUAT DISKUSI --}}
                 @auth
-                    {{-- Jika Login: Link ke halaman buat diskusi (Ganti href dengan route yang sesuai) --}}
-                    <a href="#"
+                    <a href="{{ route('fordis.create') }}"
                         class="inline-flex px-4 sm:px-6 py-2.5 sm:py-3 bg-red-600 hover:bg-red-700 text-white text-sm sm:text-base font-semibold rounded-lg transition transform active:scale-95 md:hover:scale-105 items-center gap-2">
                         <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
@@ -110,7 +109,6 @@
                         Buat Diskusi Baru
                     </a>
                 @else
-                    {{-- Jika Belum Login: Link ke Halaman Login --}}
                     <a href="{{ route('login') }}"
                         class="inline-flex px-4 sm:px-6 py-2.5 sm:py-3 bg-red-600 hover:bg-red-700 text-white text-sm sm:text-base font-semibold rounded-lg transition transform active:scale-95 md:hover:scale-105 items-center gap-2">
                         <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -128,26 +126,26 @@
     <div class="border-b border-gray-800 bg-slate-900/50 backdrop-blur-sm sticky top-0 md:top-16 z-10">
         <div class="container mx-auto px-4 sm:px-6 md:px-8 lg:px-16">
             <div class="flex gap-1 sm:gap-2 overflow-x-auto py-3 sm:py-4 tab-scroll">
-                <button
-                    class="px-4 sm:px-6 py-2 bg-red-600 text-white text-sm sm:text-base font-semibold rounded-lg whitespace-nowrap transition flex-shrink-0">
+                <a href="{{ route('fordis', ['filter' => 'trending']) }}"
+                    class="px-4 sm:px-6 py-2 {{ ($filter ?? 'trending') == 'trending' ? 'bg-red-600 text-white' : 'bg-transparent hover:bg-slate-800 text-gray-400 hover:text-white' }} text-sm sm:text-base font-semibold rounded-lg whitespace-nowrap transition flex-shrink-0">
                     🔥 Trending
-                </button>
-                <button
-                    class="px-4 sm:px-6 py-2 bg-transparent hover:bg-slate-800 text-gray-400 hover:text-white text-sm sm:text-base font-semibold rounded-lg whitespace-nowrap transition flex-shrink-0">
+                </a>
+                <a href="{{ route('fordis', ['filter' => 'movies']) }}"
+                    class="px-4 sm:px-6 py-2 {{ ($filter ?? '') == 'movies' ? 'bg-red-600 text-white' : 'bg-transparent hover:bg-slate-800 text-gray-400 hover:text-white' }} text-sm sm:text-base font-semibold rounded-lg whitespace-nowrap transition flex-shrink-0">
                     🎬 Movies
-                </button>
-                <button
-                    class="px-4 sm:px-6 py-2 bg-transparent hover:bg-slate-800 text-gray-400 hover:text-white text-sm sm:text-base font-semibold rounded-lg whitespace-nowrap transition flex-shrink-0">
+                </a>
+                <a href="{{ route('fordis', ['filter' => 'anime']) }}"
+                    class="px-4 sm:px-6 py-2 {{ ($filter ?? '') == 'anime' ? 'bg-red-600 text-white' : 'bg-transparent hover:bg-slate-800 text-gray-400 hover:text-white' }} text-sm sm:text-base font-semibold rounded-lg whitespace-nowrap transition flex-shrink-0">
                     🎌 Anime
-                </button>
-                <button
-                    class="px-4 sm:px-6 py-2 bg-transparent hover:bg-slate-800 text-gray-400 hover:text-white text-sm sm:text-base font-semibold rounded-lg whitespace-nowrap transition flex-shrink-0">
+                </a>
+                <a href="{{ route('fordis', ['filter' => 'popular']) }}"
+                    class="px-4 sm:px-6 py-2 {{ ($filter ?? '') == 'popular' ? 'bg-red-600 text-white' : 'bg-transparent hover:bg-slate-800 text-gray-400 hover:text-white' }} text-sm sm:text-base font-semibold rounded-lg whitespace-nowrap transition flex-shrink-0">
                     ⭐ Terpopuler
-                </button>
-                <button
-                    class="px-4 sm:px-6 py-2 bg-transparent hover:bg-slate-800 text-gray-400 hover:text-white text-sm sm:text-base font-semibold rounded-lg whitespace-nowrap transition flex-shrink-0">
+                </a>
+                <a href="{{ route('fordis', ['filter' => 'latest']) }}"
+                    class="px-4 sm:px-6 py-2 {{ ($filter ?? '') == 'latest' ? 'bg-red-600 text-white' : 'bg-transparent hover:bg-slate-800 text-gray-400 hover:text-white' }} text-sm sm:text-base font-semibold rounded-lg whitespace-nowrap transition flex-shrink-0">
                     🆕 Terbaru
-                </button>
+                </a>
             </div>
         </div>
     </div>
@@ -159,367 +157,133 @@
             {{-- DISCUSSION LIST --}}
             <div class="lg:col-span-2 space-y-4 sm:space-y-6">
 
-                {{-- Featured Discussion --}}
-                <div
-                    class="discussion-card bg-gradient-to-br from-red-600/20 to-purple-600/20 border border-red-500/30 rounded-xl p-4 sm:p-6 backdrop-blur-sm">
-                    <div class="flex flex-col sm:flex-row items-start gap-3 sm:gap-4">
-                        <img src="https://image.tmdb.org/t/p/w500/8Gxv8gSFCU0XGDykEGv7zR1n2ua.jpg" alt="Poster"
-                            class="w-20 h-28 sm:w-24 sm:h-36 object-cover rounded-lg shadow-lg flex-shrink-0">
-                        <div class="flex-1 w-full">
-                            <div class="flex items-center gap-2 mb-2 flex-wrap">
-                                <span
-                                    class="badge-pulse px-2.5 sm:px-3 py-1 bg-red-600 text-white text-xs font-bold rounded-full">
-                                    HOT 🔥
-                                </span>
-                                <span
-                                    class="px-2.5 sm:px-3 py-1 bg-purple-600/30 text-purple-300 text-xs font-semibold rounded-full">
-                                    Movie
-                                </span>
-                            </div>
-                            <h3
-                                class="text-lg sm:text-xl md:text-2xl font-bold text-white mb-2 hover:text-red-400 transition cursor-pointer line-clamp-2">
-                                Review Oppenheimer: Masterpiece Biografi yang Memukau!
-                            </h3>
-                            <p class="text-sm sm:text-base text-gray-300 mb-3 sm:mb-4 line-clamp-2 sm:line-clamp-2">
-                                Bahas tuntas kenapa Oppenheimer layak jadi best picture. Dari sinematografi, akting,
-                                sampai historical accuracy-nya. Christopher Nolan memang nggak pernah mengecewakan...
-                            </p>
-                            <div
-                                class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0">
-                                <div class="flex items-center gap-2 sm:gap-4 text-xs sm:text-sm text-gray-400">
-                                    <div class="flex items-center gap-2">
-                                        <div
-                                            class="w-7 h-7 sm:w-8 sm:h-8 bg-gradient-to-br from-red-500 to-purple-500 rounded-full flex items-center justify-center text-white font-bold text-xs">
-                                            JD
-                                        </div>
-                                        <span class="hidden sm:inline">John Doe</span>
-                                    </div>
-                                    <span class="hidden sm:inline">•</span>
-                                    <span>2 jam lalu</span>
+                {{-- LOOP DISKUSI DARI DATABASE --}}
+                @forelse($discussions as $discussion)
+                    <div
+                        class="discussion-card {{ $discussion->is_featured ? 'bg-gradient-to-br from-red-600/20 to-purple-600/20 border border-red-500/30' : 'bg-slate-800/50 border border-gray-700 hover:border-red-500/50' }} rounded-xl p-4 sm:p-6 backdrop-blur-sm">
+                        <div class="flex flex-col sm:flex-row items-start gap-3 sm:gap-4">
+                            @if ($discussion->media_poster)
+                                <img src="{{ $discussion->media_poster }}" alt="Poster"
+                                    class="w-20 h-28 sm:w-24 sm:h-36 object-cover rounded-lg shadow-lg flex-shrink-0">
+                            @endif
+                            <div class="flex-1 w-full">
+                                <div class="flex items-center gap-2 mb-2 flex-wrap">
+                                    @if ($discussion->is_featured)
+                                        <span
+                                            class="badge-pulse px-2.5 sm:px-3 py-1 bg-red-600 text-white text-xs font-bold rounded-full">
+                                            HOT 🔥
+                                        </span>
+                                    @endif
+                                    <span
+                                        class="px-2.5 sm:px-3 py-1 {{ $discussion->media_type == 'anime' ? 'bg-blue-600/30 text-blue-300' : 'bg-purple-600/30 text-purple-300' }} text-xs font-semibold rounded-full">
+                                        {{ $discussion->media_type == 'anime' ? 'Anime' : 'Movie' }}
+                                    </span>
                                 </div>
+                                <a href="{{ route('fordis.show', $discussion->id) }}">
+                                    <h3
+                                        class="text-lg sm:text-xl md:text-2xl font-bold text-white mb-2 hover:text-red-400 transition cursor-pointer line-clamp-2">
+                                        {{ $discussion->title }}
+                                    </h3>
+                                </a>
+                                <p class="text-sm sm:text-base text-gray-300 mb-3 sm:mb-4 line-clamp-2 sm:line-clamp-2">
+                                    {{ Str::limit($discussion->content, 150) }}
+                                </p>
+                                <div
+                                    class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0">
+                                    <div class="flex items-center gap-2 sm:gap-4 text-xs sm:text-sm text-gray-400">
+                                        <div class="flex items-center gap-2">
+                                            <div
+                                                class="w-7 h-7 sm:w-8 sm:h-8 bg-gradient-to-br from-red-500 to-purple-500 rounded-full flex items-center justify-center text-white font-bold text-xs">
+                                                {{ strtoupper(substr($discussion->user->name, 0, 2)) }}
+                                            </div>
+                                            <span class="hidden sm:inline">{{ $discussion->user->name }}</span>
+                                        </div>
+                                        <span class="hidden sm:inline">•</span>
+                                        <span>{{ $discussion->created_at->diffForHumans() }}</span>
+                                    </div>
 
-                                {{-- ACTION BUTTONS (LIKE & COMMENT) DENGAN LOGIKA AUTH --}}
-                                <div class="flex items-center gap-3 sm:gap-4 text-xs sm:text-sm">
+                                    {{-- ACTION BUTTONS (LIKE & COMMENT) DENGAN LOGIKA AUTH --}}
+                                    <div class="flex items-center gap-3 sm:gap-4 text-xs sm:text-sm">
 
-                                    {{-- Tombol Like --}}
-                                    @auth
-                                        <button class="flex items-center gap-1 text-gray-400 hover:text-red-500 transition">
-                                            <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 20 20">
-                                                <path
-                                                    d="M2 5a2 2 0 012-2h7a2 2 0 012 2v4a2 2 0 01-2 2H9l-3 3v-3H4a2 2 0 01-2-2V5z" />
-                                            </svg>
-                                            <span class="font-semibold">234</span>
-                                        </button>
-                                    @else
-                                        <a href="{{ route('login') }}"
-                                            class="flex items-center gap-1 text-gray-400 hover:text-red-500 transition"
-                                            title="Login untuk menyukai">
-                                            <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 20 20">
-                                                <path
-                                                    d="M2 5a2 2 0 012-2h7a2 2 0 012 2v4a2 2 0 01-2 2H9l-3 3v-3H4a2 2 0 01-2-2V5z" />
-                                            </svg>
-                                            <span class="font-semibold">234</span>
-                                        </a>
-                                    @endauth
+                                        {{-- Tombol Like --}}
+                                        @auth
+                                            <form action="{{ route('fordis.like', $discussion->id) }}" method="POST"
+                                                class="inline">
+                                                @csrf
+                                                <input type="hidden" name="is_like" value="1">
+                                                <button type="submit"
+                                                    class="flex items-center gap-1 {{ $discussion->isLikedBy(auth()->id()) ? 'text-red-500' : 'text-gray-400 hover:text-red-500' }} transition">
+                                                    <svg class="w-4 h-4 sm:w-5 sm:h-5"
+                                                        fill="{{ $discussion->isLikedBy(auth()->id()) ? 'currentColor' : 'none' }}"
+                                                        stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                                            stroke-width="2"
+                                                            d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                                                    </svg>
+                                                    <span class="font-semibold">{{ $discussion->likesCount() }}</span>
+                                                </button>
+                                            </form>
+                                        @else
+                                            <a href="{{ route('login') }}"
+                                                class="flex items-center gap-1 text-gray-400 hover:text-red-500 transition"
+                                                title="Login untuk menyukai">
+                                                <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor"
+                                                    viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                        d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                                                </svg>
+                                                <span class="font-semibold">{{ $discussion->likesCount() }}</span>
+                                            </a>
+                                        @endauth
 
-                                    {{-- Tombol Komentar --}}
-                                    @auth
-                                        <button
+                                        {{-- Tombol Komentar --}}
+                                        <a href="{{ route('fordis.show', $discussion->id) }}"
                                             class="flex items-center gap-1 text-gray-400 hover:text-blue-500 transition">
                                             <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 20 20">
-                                                <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
-                                                <path fill-rule="evenodd"
-                                                    d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"
-                                                    clip-rule="evenodd" />
+                                                <path
+                                                    d="M2 5a2 2 0 012-2h7a2 2 0 012 2v4a2 2 0 01-2 2H9l-3 3v-3H4a2 2 0 01-2-2V5z" />
                                             </svg>
-                                            <span class="font-semibold">1.2k</span>
-                                        </button>
-                                    @else
-                                        <a href="{{ route('login') }}"
-                                            class="flex items-center gap-1 text-gray-400 hover:text-blue-500 transition"
-                                            title="Login untuk komentar">
-                                            <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 20 20">
-                                                <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
-                                                <path fill-rule="evenodd"
-                                                    d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"
-                                                    clip-rule="evenodd" />
-                                            </svg>
-                                            <span class="font-semibold">1.2k</span>
+                                            <span class="font-semibold">{{ $discussion->commentsCount() }}</span>
                                         </a>
-                                    @endauth
 
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-
-                {{-- Regular Discussion 1 --}}
-                <div
-                    class="discussion-card bg-slate-800/50 border border-gray-700 hover:border-red-500/50 rounded-xl p-4 sm:p-6 backdrop-blur-sm">
-                    <div class="flex flex-col sm:flex-row items-start gap-3 sm:gap-4">
-                        <img src="https://image.tmdb.org/t/p/w500/vZloFAK7NmvMGKE7VkF5UHaz0I.jpg" alt="Poster"
-                            class="w-16 h-24 sm:w-20 sm:h-28 object-cover rounded-lg flex-shrink-0">
-                        <div class="flex-1 w-full">
-                            <div class="flex items-center gap-2 mb-2">
-                                <span
-                                    class="px-2.5 sm:px-3 py-1 bg-blue-600/30 text-blue-300 text-xs font-semibold rounded-full">
-                                    Anime
-                                </span>
-                            </div>
-                            <h3
-                                class="text-base sm:text-lg md:text-xl font-bold text-white mb-2 hover:text-red-400 transition cursor-pointer line-clamp-2">
-                                One Piece Episode Terbaru: Gear 5 Akhirnya Muncul!
-                            </h3>
-                            <p class="text-gray-400 text-xs sm:text-sm mb-3 sm:mb-4 line-clamp-2">
-                                Episode kemarin benar-benar epic! Animasinya luar biasa, Toei Animation all out buat
-                                adegan Gear 5 Luffy. Yang udah nonton, gimana menurut kalian?
-                            </p>
-                            <div
-                                class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-0">
-                                <div class="flex items-center gap-2 sm:gap-4 text-xs sm:text-sm text-gray-400">
-                                    <div class="flex items-center gap-2">
-                                        <div
-                                            class="w-6 h-6 sm:w-8 sm:h-8 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-full flex items-center justify-center text-white font-bold text-xs">
-                                            AS
-                                        </div>
-                                        <span class="text-xs sm:text-sm">Anime Senpai</span>
-                                    </div>
-                                    <span class="hidden sm:inline">•</span>
-                                    <span class="text-xs sm:text-sm">5 jam lalu</span>
-                                </div>
-                                <div class="flex items-center gap-3 sm:gap-4 text-xs sm:text-sm">
-
-                                    {{-- Tombol Like --}}
-                                    @auth
-                                        <button
-                                            class="flex items-center gap-1 text-gray-400 hover:text-red-500 transition">
-                                            <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 20 20">
-                                                <path
-                                                    d="M2 5a2 2 0 012-2h7a2 2 0 012 2v4a2 2 0 01-2 2H9l-3 3v-3H4a2 2 0 01-2-2V5z" />
-                                            </svg>
-                                            <span class="font-semibold">156</span>
-                                        </button>
-                                    @else
-                                        <a href="{{ route('login') }}"
-                                            class="flex items-center gap-1 text-gray-400 hover:text-red-500 transition">
-                                            <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 20 20">
-                                                <path
-                                                    d="M2 5a2 2 0 012-2h7a2 2 0 012 2v4a2 2 0 01-2 2H9l-3 3v-3H4a2 2 0 01-2-2V5z" />
-                                            </svg>
-                                            <span class="font-semibold">156</span>
-                                        </a>
-                                    @endauth
-
-                                    {{-- Tombol Komentar --}}
-                                    @auth
-                                        <button
-                                            class="flex items-center gap-1 text-gray-400 hover:text-blue-500 transition">
-                                            <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 20 20">
-                                                <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
-                                                <path fill-rule="evenodd"
-                                                    d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"
-                                                    clip-rule="evenodd" />
-                                            </svg>
-                                            <span class="font-semibold">892</span>
-                                        </button>
-                                    @else
-                                        <a href="{{ route('login') }}"
-                                            class="flex items-center gap-1 text-gray-400 hover:text-blue-500 transition">
-                                            <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 20 20">
-                                                <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
-                                                <path fill-rule="evenodd"
-                                                    d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"
-                                                    clip-rule="evenodd" />
-                                            </svg>
-                                            <span class="font-semibold">892</span>
-                                        </a>
-                                    @endauth
-                                </div>
-                            </div>
-                        </div>
+                @empty
+                    {{-- EMPTY STATE --}}
+                    <div class="text-center py-12 bg-slate-800/50 border border-gray-700 rounded-xl">
+                        <svg class="w-16 h-16 mx-auto text-gray-600 mb-4" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                        </svg>
+                        <p class="text-gray-400 text-lg mb-4">Belum ada diskusi. Jadilah yang pertama!</p>
+                        @auth
+                            <a href="{{ route('fordis.create') }}"
+                                class="inline-flex items-center gap-2 px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg transition">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 4v16m8-8H4" />
+                                </svg>
+                                Buat Diskusi Pertama
+                            </a>
+                        @else
+                            <a href="{{ route('login') }}"
+                                class="inline-flex items-center gap-2 px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg transition">
+                                Login untuk Memulai
+                            </a>
+                        @endauth
                     </div>
-                </div>
+                @endforelse
 
-                {{-- Regular Discussion 2 --}}
-                <div
-                    class="discussion-card bg-slate-800/50 border border-gray-700 hover:border-red-500/50 rounded-xl p-4 sm:p-6 backdrop-blur-sm">
-                    <div class="flex flex-col sm:flex-row items-start gap-3 sm:gap-4">
-                        <img src="https://image.tmdb.org/t/p/w500/rktDFPbfHfUbArZ6OOOKsXcv0Bm.jpg" alt="Poster"
-                            class="w-16 h-24 sm:w-20 sm:h-28 object-cover rounded-lg flex-shrink-0">
-                        <div class="flex-1 w-full">
-                            <div class="flex items-center gap-2 mb-2">
-                                <span
-                                    class="px-2.5 sm:px-3 py-1 bg-purple-600/30 text-purple-300 text-xs font-semibold rounded-full">
-                                    Movie
-                                </span>
-                            </div>
-                            <h3
-                                class="text-base sm:text-lg md:text-xl font-bold text-white mb-2 hover:text-red-400 transition cursor-pointer line-clamp-2">
-                                Dune Part 2: Worth the Wait atau Overhyped?
-                            </h3>
-                            <p class="text-gray-400 text-xs sm:text-sm mb-3 sm:mb-4 line-clamp-2">
-                                Setelah nunggu lama akhirnya keluar juga. Menurut gw sih worth banget, tapi ada yang
-                                bilang terlalu lambat. Share pendapat kalian dong!
-                            </p>
-                            <div
-                                class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-0">
-                                <div class="flex items-center gap-2 sm:gap-4 text-xs sm:text-sm text-gray-400">
-                                    <div class="flex items-center gap-2">
-                                        <div
-                                            class="w-6 h-6 sm:w-8 sm:h-8 bg-gradient-to-br from-orange-500 to-red-500 rounded-full flex items-center justify-center text-white font-bold text-xs">
-                                            MC
-                                        </div>
-                                        <span class="text-xs sm:text-sm">MovieCritic99</span>
-                                    </div>
-                                    <span class="hidden sm:inline">•</span>
-                                    <span class="text-xs sm:text-sm">1 hari lalu</span>
-                                </div>
-                                <div class="flex items-center gap-3 sm:gap-4 text-xs sm:text-sm">
-                                    {{-- Like Logic --}}
-                                    @auth
-                                        <button
-                                            class="flex items-center gap-1 text-gray-400 hover:text-red-500 transition">
-                                            <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 20 20">
-                                                <path
-                                                    d="M2 5a2 2 0 012-2h7a2 2 0 012 2v4a2 2 0 01-2 2H9l-3 3v-3H4a2 2 0 01-2-2V5z" />
-                                            </svg>
-                                            <span class="font-semibold">89</span>
-                                        </button>
-                                    @else
-                                        <a href="{{ route('login') }}"
-                                            class="flex items-center gap-1 text-gray-400 hover:text-red-500 transition">
-                                            <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 20 20">
-                                                <path
-                                                    d="M2 5a2 2 0 012-2h7a2 2 0 012 2v4a2 2 0 01-2 2H9l-3 3v-3H4a2 2 0 01-2-2V5z" />
-                                            </svg>
-                                            <span class="font-semibold">89</span>
-                                        </a>
-                                    @endauth
-
-                                    {{-- Comment Logic --}}
-                                    @auth
-                                        <button
-                                            class="flex items-center gap-1 text-gray-400 hover:text-blue-500 transition">
-                                            <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 20 20">
-                                                <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
-                                                <path fill-rule="evenodd"
-                                                    d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"
-                                                    clip-rule="evenodd" />
-                                            </svg>
-                                            <span class="font-semibold">543</span>
-                                        </button>
-                                    @else
-                                        <a href="{{ route('login') }}"
-                                            class="flex items-center gap-1 text-gray-400 hover:text-blue-500 transition">
-                                            <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 20 20">
-                                                <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
-                                                <path fill-rule="evenodd"
-                                                    d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"
-                                                    clip-rule="evenodd" />
-                                            </svg>
-                                            <span class="font-semibold">543</span>
-                                        </a>
-                                    @endauth
-                                </div>
-                            </div>
-                        </div>
+                {{-- Pagination --}}
+                @if ($discussions->hasPages())
+                    <div class="mt-6">
+                        {{ $discussions->links() }}
                     </div>
-                </div>
-
-                {{-- Regular Discussion 3 --}}
-                <div
-                    class="discussion-card bg-slate-800/50 border border-gray-700 hover:border-red-500/50 rounded-xl p-4 sm:p-6 backdrop-blur-sm">
-                    <div class="flex flex-col sm:flex-row items-start gap-3 sm:gap-4">
-                        <img src="https://image.tmdb.org/t/p/w500/rktDFPbfHfUbArZ6OOOKsXcv0Bm.jpg" alt="Poster"
-                            class="w-16 h-24 sm:w-20 sm:h-28 object-cover rounded-lg flex-shrink-0">
-                        <div class="flex-1 w-full">
-                            <div class="flex items-center gap-2 mb-2">
-                                <span
-                                    class="px-2.5 sm:px-3 py-1 bg-blue-600/30 text-blue-300 text-xs font-semibold rounded-full">
-                                    Anime
-                                </span>
-                            </div>
-                            <h3
-                                class="text-base sm:text-lg md:text-xl font-bold text-white mb-2 hover:text-red-400 transition cursor-pointer line-clamp-2">
-                                Attack on Titan Ending: Puas atau Kecewa?
-                            </h3>
-                            <p class="text-gray-400 text-xs sm:text-sm mb-3 sm:mb-4 line-clamp-2">
-                                Setelah 10 tahun lebih, akhirnya AoT tamat. Ending-nya controversial banget sih. Ada
-                                yang suka, ada yang benci. Kalian team mana?
-                            </p>
-                            <div
-                                class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-0">
-                                <div class="flex items-center gap-2 sm:gap-4 text-xs sm:text-sm text-gray-400">
-                                    <div class="flex items-center gap-2">
-                                        <div
-                                            class="w-6 h-6 sm:w-8 sm:h-8 bg-gradient-to-br from-green-500 to-emerald-500 rounded-full flex items-center justify-center text-white font-bold text-xs">
-                                            EJ
-                                        </div>
-                                        <span class="text-xs sm:text-sm">ErenJaeger</span>
-                                    </div>
-                                    <span class="hidden sm:inline">•</span>
-                                    <span class="text-xs sm:text-sm">3 hari lalu</span>
-                                </div>
-                                <div class="flex items-center gap-3 sm:gap-4 text-xs sm:text-sm">
-                                    {{-- Like Logic --}}
-                                    @auth
-                                        <button
-                                            class="flex items-center gap-1 text-gray-400 hover:text-red-500 transition">
-                                            <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 20 20">
-                                                <path
-                                                    d="M2 5a2 2 0 012-2h7a2 2 0 012 2v4a2 2 0 01-2 2H9l-3 3v-3H4a2 2 0 01-2-2V5z" />
-                                            </svg>
-                                            <span class="font-semibold">312</span>
-                                        </button>
-                                    @else
-                                        <a href="{{ route('login') }}"
-                                            class="flex items-center gap-1 text-gray-400 hover:text-red-500 transition">
-                                            <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 20 20">
-                                                <path
-                                                    d="M2 5a2 2 0 012-2h7a2 2 0 012 2v4a2 2 0 01-2 2H9l-3 3v-3H4a2 2 0 01-2-2V5z" />
-                                            </svg>
-                                            <span class="font-semibold">312</span>
-                                        </a>
-                                    @endauth
-
-                                    {{-- Comment Logic --}}
-                                    @auth
-                                        <button
-                                            class="flex items-center gap-1 text-gray-400 hover:text-blue-500 transition">
-                                            <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 20 20">
-                                                <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
-                                                <path fill-rule="evenodd"
-                                                    d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"
-                                                    clip-rule="evenodd" />
-                                            </svg>
-                                            <span class="font-semibold">2.1k</span>
-                                        </button>
-                                    @else
-                                        <a href="{{ route('login') }}"
-                                            class="flex items-center gap-1 text-gray-400 hover:text-blue-500 transition">
-                                            <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 20 20">
-                                                <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
-                                                <path fill-rule="evenodd"
-                                                    d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"
-                                                    clip-rule="evenodd" />
-                                            </svg>
-                                            <span class="font-semibold">2.1k</span>
-                                        </a>
-                                    @endauth
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                {{-- Load More Button --}}
-                <div class="text-center pt-4 sm:pt-6">
-                    <button
-                        class="w-full sm:w-auto px-6 sm:px-8 py-2.5 sm:py-3 bg-slate-800 hover:bg-slate-700 border border-gray-700 hover:border-red-500/50 text-white text-sm sm:text-base font-semibold rounded-lg transition">
-                        Muat Lebih Banyak
-                    </button>
-                </div>
+                @endif
 
             </div>
 
@@ -533,26 +297,15 @@
                         Trending Topics
                     </h3>
                     <div class="space-y-2 sm:space-y-3">
-                        <div
-                            class="flex items-center justify-between p-2.5 sm:p-3 bg-slate-700/30 rounded-lg hover:bg-slate-700/50 transition cursor-pointer">
-                            <span class="text-gray-300 text-xs sm:text-sm">#OpenheimerReview</span>
-                            <span class="text-red-400 text-xs font-bold">234</span>
-                        </div>
-                        <div
-                            class="flex items-center justify-between p-2.5 sm:p-3 bg-slate-700/30 rounded-lg hover:bg-slate-700/50 transition cursor-pointer">
-                            <span class="text-gray-300 text-xs sm:text-sm">#OnePieceGear5</span>
-                            <span class="text-red-400 text-xs font-bold">189</span>
-                        </div>
-                        <div
-                            class="flex items-center justify-between p-2.5 sm:p-3 bg-slate-700/30 rounded-lg hover:bg-slate-700/50 transition cursor-pointer">
-                            <span class="text-gray-300 text-xs sm:text-sm">#DuneDiscussion</span>
-                            <span class="text-red-400 text-xs font-bold">156</span>
-                        </div>
-                        <div
-                            class="flex items-center justify-between p-2.5 sm:p-3 bg-slate-700/30 rounded-lg hover:bg-slate-700/50 transition cursor-pointer">
-                            <span class="text-gray-300 text-xs sm:text-sm">#MarvelVsDC</span>
-                            <span class="text-red-400 text-xs font-bold">98</span>
-                        </div>
+                        @forelse($trendingTopics ?? [] as $topic)
+                            <div
+                                class="flex items-center justify-between p-2.5 sm:p-3 bg-slate-700/30 rounded-lg hover:bg-slate-700/50 transition cursor-pointer">
+                                <span class="text-gray-300 text-xs sm:text-sm">#{{ ucfirst($topic->category) }}</span>
+                                <span class="text-red-400 text-xs font-bold">{{ $topic->count }}</span>
+                            </div>
+                        @empty
+                            <p class="text-gray-400 text-sm text-center py-4">Belum ada trending topics</p>
+                        @endforelse
                     </div>
                 </div>
 
@@ -563,54 +316,35 @@
                         Top Contributors
                     </h3>
                     <div class="space-y-3 sm:space-y-4">
-                        <div class="flex items-center gap-2 sm:gap-3">
-                            <div class="relative">
-                                <div
-                                    class="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-yellow-500 to-orange-500 rounded-full flex items-center justify-center text-white font-bold text-sm sm:text-base">
-                                    JD
+                        @php
+                            $topUsers = \App\Models\User::withCount('discussions')
+                                ->orderBy('discussions_count', 'desc')
+                                ->take(3)
+                                ->get();
+                        @endphp
+
+                        @forelse($topUsers as $index => $user)
+                            <div class="flex items-center gap-2 sm:gap-3">
+                                <div class="relative">
+                                    <div
+                                        class="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br {{ $index == 0 ? 'from-yellow-500 to-orange-500' : ($index == 1 ? 'from-gray-400 to-gray-500' : 'from-amber-600 to-amber-700') }} rounded-full flex items-center justify-center text-white font-bold text-sm sm:text-base">
+                                        {{ strtoupper(substr($user->name, 0, 2)) }}
+                                    </div>
+                                    <span
+                                        class="absolute -top-1 -right-1 w-5 h-5 sm:w-6 sm:h-6 {{ $index == 0 ? 'bg-yellow-500' : ($index == 1 ? 'bg-gray-400' : 'bg-amber-600') }} text-white text-xs font-bold rounded-full flex items-center justify-center border-2 border-slate-900">
+                                        {{ $index + 1 }}
+                                    </span>
                                 </div>
-                                <span
-                                    class="absolute -top-1 -right-1 w-5 h-5 sm:w-6 sm:h-6 bg-yellow-500 text-white text-xs font-bold rounded-full flex items-center justify-center border-2 border-slate-900">
-                                    1
-                                </span>
-                            </div>
-                            <div class="flex-1">
-                                <div class="text-white font-semibold text-sm sm:text-base">John Doe</div>
-                                <div class="text-gray-400 text-xs sm:text-sm">1,234 posts</div>
-                            </div>
-                        </div>
-                        <div class="flex items-center gap-2 sm:gap-3">
-                            <div class="relative">
-                                <div
-                                    class="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-gray-400 to-gray-500 rounded-full flex items-center justify-center text-white font-bold text-sm sm:text-base">
-                                    AS
+                                <div class="flex-1">
+                                    <div class="text-white font-semibold text-sm sm:text-base">{{ $user->name }}
+                                    </div>
+                                    <div class="text-gray-400 text-xs sm:text-sm">{{ $user->discussions_count }} posts
+                                    </div>
                                 </div>
-                                <span
-                                    class="absolute -top-1 -right-1 w-5 h-5 sm:w-6 sm:h-6 bg-gray-400 text-white text-xs font-bold rounded-full flex items-center justify-center border-2 border-slate-900">
-                                    2
-                                </span>
                             </div>
-                            <div class="flex-1">
-                                <div class="text-white font-semibold text-sm sm:text-base">Anime Senpai</div>
-                                <div class="text-gray-400 text-xs sm:text-sm">987 posts</div>
-                            </div>
-                        </div>
-                        <div class="flex items-center gap-2 sm:gap-3">
-                            <div class="relative">
-                                <div
-                                    class="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-amber-600 to-amber-700 rounded-full flex items-center justify-center text-white font-bold text-sm sm:text-base">
-                                    MC
-                                </div>
-                                <span
-                                    class="absolute -top-1 -right-1 w-5 h-5 sm:w-6 sm:h-6 bg-amber-600 text-white text-xs font-bold rounded-full flex items-center justify-center border-2 border-slate-900">
-                                    3
-                                </span>
-                            </div>
-                            <div class="flex-1">
-                                <div class="text-white font-semibold text-sm sm:text-base">MovieCritic99</div>
-                                <div class="text-gray-400 text-xs sm:text-sm">756 posts</div>
-                            </div>
-                        </div>
+                        @empty
+                            <p class="text-gray-400 text-sm text-center py-4">Belum ada kontributor</p>
+                        @endforelse
                     </div>
                 </div>
 
