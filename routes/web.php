@@ -46,10 +46,10 @@ Route::get('/anime/{id}', [HomeController::class, 'showAnime'])->name('anime.det
 Route::get('/detail-movie/{id}', [HomeController::class, 'showMovie'])->name('homes.detail-movie');
 Route::get('/detail-anime/{id}', [HomeController::class, 'showAnime'])->name('homes.detail-anime');
 
-// di bawah adalah bagian login bawaan dari laravel breeze
-// Route::get('/dashboard', function () {
-//     return view('dashboard');
-// })->middleware(['auth', 'verified'])->name('dashboard');
+// Dashboard redirect ke fordis
+Route::get('/dashboard', function () {
+    return redirect()->route('fordis');
+})->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
