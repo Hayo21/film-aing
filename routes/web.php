@@ -51,6 +51,12 @@ Route::get('/dashboard', function () {
     return redirect()->route('fordis');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
+// Comment routes (untuk movie & anime)
+Route::middleware('auth')->group(function () {
+    Route::post('/comments', [HomeController::class, 'storeComment'])->name('comments.store');
+    Route::delete('/comments/{id}', [HomeController::class, 'deleteComment'])->name('comments.delete');
+});
+
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

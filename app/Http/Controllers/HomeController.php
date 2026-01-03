@@ -5,7 +5,10 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Client\Response;
+use Illuminate\Http\Request;
+use App\Models\Comment;
 
 class HomeController extends Controller
 {
@@ -89,9 +92,15 @@ class HomeController extends Controller
             $movie['genres'] = $movieEN['genres'];
         }
 
-        return view('homes.detail-movie', compact('movie'));
-    }
+        // Get comments from database
+        $comments = Comment::where('commentable_type', 'movie')
+            ->where('commentable_id', $id)
+            ->with('user')
+            ->latest()
+            ->get();
 
+        return view('homes.detail-movie', compact('movie', 'comments'));
+    }
 
     // Halaman Detail Anime
     public function showAnime($id)
@@ -118,16 +127,62 @@ class HomeController extends Controller
             return $a['role'] === 'Main' ? -1 : 1;
         });
 
-        // Kirim $anime DAN $characters ke view
+        // Get comments from database
+        $comments = Comment::where('commentable_type', 'anime')
+            ->where('commentable_id', $id)
+            ->with('user')
+            ->latest()
+            ->get();
+
+        // Kirim $anime DAN $characters DAN $comments ke view
         return view('homes.detail-anime', [
             'anime' => $anime,
-            'characters' => $characters
+            'characters' => $characters,
+            'comments' => $comments
         ]);
     }
 
     /**
+     * Store comment untuk movie atau anime
+     */
+    public function storeComment(Request $request)
+    {
+        $request->validate([
+            'content' => 'required|max:1000',
+            'commentable_type' => 'required|in:movie,anime',
+            'commentable_id' => 'required'
+        ]);
+
+        Comment::create([
+            'user_id' => Auth::id(),
+            'commentable_type' => $request->commentable_type,
+            'commentable_id' => $request->commentable_id,
+            'content' => $request->content
+        ]);
+
+        return back()->with('success', 'Komentar berhasil ditambahkan!');
+    }
+
+    /**
+     * Delete comment (hanya pemilik yang bisa)
+     */
+    public function deleteComment($id)
+    {
+        $comment = Comment::findOrFail($id);
+
+        // Cek apakah user adalah pemilik comment
+        if ($comment->user_id !== Auth::id()) {
+            return back()->with('error', 'Anda tidak memiliki akses untuk menghapus komentar ini!');
+        }
+
+        $comment->delete();
+
+        return back()->with('success', 'Komentar berhasil dihapus!');
+    }
+
+    /**
      * Ambil data anime dari Jikan API dengan caching
-     * * @return array
+     * @return array
      */
     private function getTopAnime(): array
     {
@@ -152,7 +207,7 @@ class HomeController extends Controller
 
     /**
      * Ambil data movie dari TMDB API dengan caching
-     * * @return array
+     * @return array
      */
     private function getPopularMovies(): array
     {
@@ -222,7 +277,7 @@ class HomeController extends Controller
 
     /**
      * Build data carousel slides (2 movies + 2 anime)
-     * * @return array
+     * @return array
      */
     private function buildCarouselSlides(array $movies, array $animes): array
     {

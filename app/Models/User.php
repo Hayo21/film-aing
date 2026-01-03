@@ -45,7 +45,7 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
-    
+
     public function discussions()
     {
         return $this->hasMany(Discussion::class);
@@ -59,5 +59,10 @@ class User extends Authenticatable
     public function discussionComments()
     {
         return $this->hasMany(DiscussionComment::class);
+    }
+
+    public function comments()
+    {
+        return $this->hasMany(Comment::class);
     }
 }

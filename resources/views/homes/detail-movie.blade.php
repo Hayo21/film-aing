@@ -129,6 +129,98 @@
                         </div>
                     </section>
                 @endif
+
+                {{-- COMMENTS SECTION --}}
+                <section class="bg-gray-800/50 backdrop-blur-sm rounded-2xl p-6 md:p-8 border border-gray-700/50">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-1 h-8 bg-red-600 rounded-full"></div>
+                        <h2 class="text-2xl md:text-3xl font-bold">Komentar ({{ $comments->count() }})</h2>
+                    </div>
+
+                    {{-- Comment Form --}}
+                    @auth
+                        <form action="{{ route('comments.store') }}" method="POST" class="mb-8">
+                            @csrf
+                            <input type="hidden" name="commentable_type" value="movie">
+                            <input type="hidden" name="commentable_id" value="{{ $movie['id'] }}">
+
+                            <div class="flex gap-3">
+                                <div
+                                    class="w-10 h-10 rounded-full bg-gradient-to-br from-red-500 to-purple-500 flex items-center justify-center text-white font-bold flex-shrink-0">
+                                    {{ strtoupper(substr(Auth::user()->name, 0, 2)) }}
+                                </div>
+                                <div class="flex-1">
+                                    <textarea name="content" rows="3"
+                                        class="w-full bg-gray-700/50 border border-gray-600 rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:border-red-500 resize-none"
+                                        placeholder="Tulis komentar Anda tentang film ini..." required></textarea>
+                                    <button type="submit"
+                                        class="mt-3 px-6 py-2 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg transition">
+                                        Kirim Komentar
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    @else
+                        <div class="mb-8 p-6 bg-gray-700/30 border border-gray-600 rounded-xl text-center">
+                            <p class="text-gray-300 mb-4">Silahkan login untuk memberikan komentar</p>
+                            <a href="{{ route('login') }}"
+                                class="inline-block px-6 py-2 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg transition">
+                                Login
+                            </a>
+                        </div>
+                    @endauth
+
+                    {{-- Success Message --}}
+                    @if (session('success'))
+                        <div class="mb-6 p-4 bg-green-600/20 border border-green-500/50 rounded-lg text-green-300">
+                            {{ session('success') }}
+                        </div>
+                    @endif
+
+                    {{-- Comments List --}}
+                    <div class="space-y-4">
+                        @forelse($comments as $comment)
+                            <div class="flex gap-3 p-4 bg-gray-700/30 rounded-xl hover:bg-gray-700/50 transition">
+                                <div
+                                    class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center text-white font-bold flex-shrink-0">
+                                    {{ strtoupper(substr($comment->user->name, 0, 2)) }}
+                                </div>
+                                <div class="flex-1">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <div>
+                                            <span class="text-white font-semibold">{{ $comment->user->name }}</span>
+                                            <span
+                                                class="text-gray-400 text-sm ml-2">{{ $comment->created_at->diffForHumans() }}</span>
+                                        </div>
+
+                                        @auth
+                                            @if ($comment->user_id === Auth::id())
+                                                <form action="{{ route('comments.delete', $comment->id) }}" method="POST"
+                                                    onsubmit="return confirm('Yakin ingin menghapus komentar ini?')">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="text-red-400 hover:text-red-500 text-sm">
+                                                        Hapus
+                                                    </button>
+                                                </form>
+                                            @endif
+                                        @endauth
+                                    </div>
+                                    <p class="text-gray-300 text-sm leading-relaxed">{{ $comment->content }}</p>
+                                </div>
+                            </div>
+                        @empty
+                            <div class="text-center py-12">
+                                <svg class="w-16 h-16 mx-auto text-gray-600 mb-4" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                                </svg>
+                                <p class="text-gray-400">Belum ada komentar. Jadilah yang pertama berkomentar!</p>
+                            </div>
+                        @endforelse
+                    </div>
+                </section>
             </div>
 
             {{-- RIGHT SIDEBAR --}}
