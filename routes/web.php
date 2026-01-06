@@ -6,6 +6,7 @@ use App\Http\Controllers\EntertainmentController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\FordisController;
+use App\Http\Controllers\SocialiteController;
 
 
 // tes api
@@ -62,5 +63,10 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+
+// routes/web.php
+Route::get('auth/google', [SocialiteController::class, 'redirectToGoogle'])->name('google.login');
+Route::get('auth/google/callback', [SocialiteController::class, 'handleGoogleCallback']);
+
 
 require __DIR__ . '/auth.php';
