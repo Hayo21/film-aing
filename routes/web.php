@@ -7,6 +7,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\FordisController;
 use App\Http\Controllers\SocialiteController;
+use App\Http\Controllers\BookmarkController;
 
 
 // tes api
@@ -64,9 +65,15 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-// routes/web.php
+// routes login with google
 Route::get('auth/google', [SocialiteController::class, 'redirectToGoogle'])->name('google.login');
 Route::get('auth/google/callback', [SocialiteController::class, 'handleGoogleCallback']);
 
+// Bookmark routes
+Route::middleware('auth')->group(function () {
+    Route::get('/bookmark', [BookmarkController::class, 'index'])->name('bookmark.index');
+    Route::post('/bookmark/toggle', [BookmarkController::class, 'toggle'])->name('bookmark.toggle');
+    Route::delete('/bookmark/{id}', [BookmarkController::class, 'destroy'])->name('bookmark.destroy');
+});
 
 require __DIR__ . '/auth.php';

@@ -42,12 +42,60 @@
                     {{-- Details --}}
                     <div class="md:col-span-2 space-y-6">
 
-                        {{-- Title --}}
-                        <div>
-                            <h2 class="text-3xl font-bold mb-1">{{ $movie['title'] }}</h2>
-                            @if (!empty($movie['tagline']))
-                                <p class="text-gray-400 italic">"{{ $movie['tagline'] }}"</p>
-                            @endif
+                        {{-- Title & Bookmark --}}
+                        <div class="flex items-start justify-between gap-4">
+                            <div class="flex-1">
+                                <h2 class="text-3xl font-bold mb-1">{{ $movie['title'] }}</h2>
+                                @if (!empty($movie['tagline']))
+                                    <p class="text-gray-400 italic">"{{ $movie['tagline'] }}"</p>
+                                @endif
+                            </div>
+
+                            {{-- Bookmark Button --}}
+                            @auth
+                                @php
+                                    $isBookmarked = \App\Models\Bookmark::where([
+                                        'user_id' => Auth::id(),
+                                        'media_type' => 'movie',
+                                        'media_id' => $movie['id'],
+                                    ])->exists();
+                                @endphp
+
+                                <form action="{{ route('bookmark.toggle') }}" method="POST">
+                                    @csrf
+                                    <input type="hidden" name="media_type" value="movie">
+                                    <input type="hidden" name="media_id" value="{{ $movie['id'] }}">
+                                    <input type="hidden" name="title" value="{{ $movie['title'] }}">
+                                    <input type="hidden" name="poster_url"
+                                        value="https://image.tmdb.org/t/p/w500{{ $movie['poster_path'] }}">
+                                    <input type="hidden" name="overview" value="{{ $movie['overview'] }}">
+                                    <input type="hidden" name="release_date" value="{{ $movie['release_date'] }}">
+                                    <input type="hidden" name="rating" value="{{ $movie['vote_average'] }}">
+
+                                    <button type="submit"
+                                        class="p-3 {{ $isBookmarked ? 'bg-red-600 hover:bg-red-700' : 'bg-slate-700 hover:bg-slate-600' }} rounded-xl transition flex items-center gap-2 group flex-shrink-0"
+                                        title="{{ $isBookmarked ? 'Hapus dari Bookmark' : 'Tambah ke Bookmark' }}">
+                                        <svg class="w-6 h-6 {{ $isBookmarked ? 'fill-current' : '' }}"
+                                            fill="{{ $isBookmarked ? 'currentColor' : 'none' }}" stroke="currentColor"
+                                            viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                                        </svg>
+                                        <span class="hidden lg:inline text-sm font-semibold">
+                                            {{ $isBookmarked ? 'Tersimpan' : 'Simpan' }}
+                                        </span>
+                                    </button>
+                                </form>
+                            @else
+                                <a href="{{ route('login') }}"
+                                    class="p-3 bg-slate-700 hover:bg-slate-600 rounded-xl transition flex items-center gap-2 flex-shrink-0"
+                                    title="Login untuk bookmark">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                                    </svg>
+                                </a>
+                            @endauth
                         </div>
 
                         {{-- Status & Language --}}
@@ -70,7 +118,6 @@
                                 {{ $movie['original_language'] }}
                             </span>
                         </div>
-
 
                         {{-- Synopsis --}}
                         <div>
@@ -102,6 +149,8 @@
                         </div>
                     </section>
                 @endif
+
+
 
                 {{-- Cast --}}
                 @if (!empty($movie['credits']['cast']))
@@ -195,11 +244,13 @@
 
                                         @auth
                                             @if ($comment->user_id === Auth::id())
-                                                <form action="{{ route('comments.delete', $comment->id) }}" method="POST"
+                                                <form action="{{ route('comments.delete', $comment->id) }}"
+                                                    method="POST"
                                                     onsubmit="return confirm('Yakin ingin menghapus komentar ini?')">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button type="submit" class="text-red-400 hover:text-red-500 text-sm">
+                                                    <button type="submit"
+                                                        class="text-red-400 hover:text-red-500 text-sm">
                                                         Hapus
                                                     </button>
                                                 </form>
@@ -211,8 +262,8 @@
                             </div>
                         @empty
                             <div class="text-center py-12">
-                                <svg class="w-16 h-16 mx-auto text-gray-600 mb-4" fill="none" stroke="currentColor"
-                                    viewBox="0 0 24 24">
+                                <svg class="w-16 h-16 mx-auto text-gray-600 mb-4" fill="none"
+                                    stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                                 </svg>

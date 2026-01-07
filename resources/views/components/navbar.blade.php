@@ -24,9 +24,9 @@
                 {{ request()->routeIs('home')
                     ? 'text-blue-500 after:absolute after:left-0 after:-bottom-1 after:w-full after:h-0.5 after:bg-blue-500'
                     : 'text-gray-100 hover:text-red-500
-                                        after:absolute after:left-0 after:bottom-0 after:h-0.5 after:w-full
-                                        after:bg-red-500 after:scale-x-0 after:origin-left
-                                        hover:after:scale-x-100 after:transition-transform after:duration-300' }}">
+                                                                        after:absolute after:left-0 after:bottom-0 after:h-0.5 after:w-full
+                                                                        after:bg-red-500 after:scale-x-0 after:origin-left
+                                                                        hover:after:scale-x-100 after:transition-transform after:duration-300' }}">
                     Home
                 </a>
 
@@ -46,9 +46,9 @@
                 {{ request()->routeIs('fordis')
                     ? 'text-blue-500 after:absolute after:left-0 after:-bottom-1 after:w-full after:h-0.5 after:bg-blue-500'
                     : 'text-gray-100 hover:text-red-500
-                                        after:absolute after:left-0 after:bottom-0 after:h-0.5 after:w-full
-                                        after:bg-red-500 after:scale-x-0 after:origin-left
-                                        hover:after:scale-x-100 after:transition-transform after:duration-300' }}">
+                                                                        after:absolute after:left-0 after:bottom-0 after:h-0.5 after:w-full
+                                                                        after:bg-red-500 after:scale-x-0 after:origin-left
+                                                                        hover:after:scale-x-100 after:transition-transform after:duration-300' }}">
                     Fordis
                 </a>
 
@@ -57,9 +57,9 @@
                 {{ request()->routeIs('about')
                     ? 'text-blue-500 after:absolute after:left-0 after:-bottom-1 after:w-full after:h-0.5 after:bg-blue-500'
                     : 'text-gray-100 hover:text-red-500
-                                        after:absolute after:left-0 after:bottom-0 after:h-0.5 after:w-full
-                                        after:bg-red-500 after:scale-x-0 after:origin-left
-                                        hover:after:scale-x-100 after:transition-transform after:duration-300' }}">
+                                                                        after:absolute after:left-0 after:bottom-0 after:h-0.5 after:w-full
+                                                                        after:bg-red-500 after:scale-x-0 after:origin-left
+                                                                        hover:after:scale-x-100 after:transition-transform after:duration-300' }}">
                     Tentang
                 </a>
 
@@ -126,6 +126,16 @@
                                 </svg>
                                 Settings
                             </a>
+
+                            @auth
+                                <a href="{{ route('bookmark.index') }}"
+                                    class="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-red-50 hover:text-red-600 transition-colors duration-200">
+                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z" />
+                                    </svg>
+                                    <span class="hidden md:inline">Bookmark</span>
+                                </a>
+                            @endauth
 
                             <a href="{{ route('fordis') }}"
                                 class="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-red-50 hover:text-red-600 transition-colors duration-200">
@@ -194,9 +204,9 @@
                 {{ request()->routeIs('home')
                     ? 'text-blue-500 after:absolute after:left-0 after:bottom-0 after:h-0.5 after:w-full after:bg-blue-500'
                     : 'text-gray-100 hover:text-red-500
-                                        after:absolute after:left-0 after:bottom-0 after:h-0.5 after:w-full
-                                        after:bg-red-500 after:scale-x-0 after:origin-left
-                                        hover:after:scale-x-100 after:transition-transform after:duration-300' }}">
+                                                                        after:absolute after:left-0 after:bottom-0 after:h-0.5 after:w-full
+                                                                        after:bg-red-500 after:scale-x-0 after:origin-left
+                                                                        hover:after:scale-x-100 after:transition-transform after:duration-300' }}">
                 Home
             </a>
 
@@ -205,9 +215,9 @@
                 {{ request()->routeIs('categories.index')
                     ? 'text-blue-500 after:absolute after:left-0 after:bottom-0 after:h-0.5 after:w-full after:bg-blue-500'
                     : 'text-gray-100 hover:text-red-500
-                                        after:absolute after:left-0 after:bottom-0 after:h-0.5 after:w-full
-                                        after:bg-red-500 after:scale-x-0 after:origin-left
-                                        hover:after:scale-x-100 after:transition-transform after:duration-300' }}">
+                                                                        after:absolute after:left-0 after:bottom-0 after:h-0.5 after:w-full
+                                                                        after:bg-red-500 after:scale-x-0 after:origin-left
+                                                                        hover:after:scale-x-100 after:transition-transform after:duration-300' }}">
                 Kategori
             </a>
 
@@ -216,9 +226,9 @@
                 {{ request()->routeIs('fordis')
                     ? 'text-blue-500 after:absolute after:left-0 after:bottom-0 after:h-0.5 after:w-full after:bg-blue-500'
                     : 'text-gray-100 hover:text-red-500
-                                        after:absolute after:left-0 after:bottom-0 after:h-0.5 after:w-full
-                                        after:bg-red-500 after:scale-x-0 after:origin-left
-                                        hover:after:scale-x-100 after:transition-transform after:duration-300' }}">
+                                                                        after:absolute after:left-0 after:bottom-0 after:h-0.5 after:w-full
+                                                                        after:bg-red-500 after:scale-x-0 after:origin-left
+                                                                        hover:after:scale-x-100 after:transition-transform after:duration-300' }}">
                 Fordis
             </a>
 
@@ -227,9 +237,9 @@
                 {{ request()->routeIs('about')
                     ? 'text-blue-500 after:absolute after:left-0 after:bottom-0 after:h-0.5 after:w-full after:bg-blue-500'
                     : 'text-gray-100 hover:text-red-500
-                                        after:absolute after:left-0 after:bottom-0 after:h-0.5 after:w-full
-                                        after:bg-red-500 after:scale-x-0 after:origin-left
-                                        hover:after:scale-x-100 after:transition-transform after:duration-300' }}">
+                                                                        after:absolute after:left-0 after:bottom-0 after:h-0.5 after:w-full
+                                                                        after:bg-red-500 after:scale-x-0 after:origin-left
+                                                                        hover:after:scale-x-100 after:transition-transform after:duration-300' }}">
                 Tentang
             </a>
 
