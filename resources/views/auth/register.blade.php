@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <title>Register | Film Aing</title>
 
@@ -84,7 +85,7 @@
             transition: all 0.3s ease;
         }
 
-        .btn-primary:hover {
+        .btn-primary:hover:not(:disabled) {
             background: linear-gradient(135deg, #B91C1C, #DC2626);
             transform: translateY(-2px);
             box-shadow: 0 10px 25px rgba(239, 68, 68, 0.3);
@@ -92,6 +93,11 @@
 
         .btn-primary:active {
             transform: translateY(0);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
         }
 
         /* === BACKGROUND PATTERN === */
@@ -106,6 +112,21 @@
             height: 4px;
             border-radius: 2px;
             transition: all 0.3s ease;
+        }
+
+        .strength-weak {
+            width: 33.33%;
+            background: #EF4444;
+        }
+
+        .strength-medium {
+            width: 66.66%;
+            background: #F59E0B;
+        }
+
+        .strength-strong {
+            width: 100%;
+            background: #10B981;
         }
 
         /* === PROGRESS STEPS === */
@@ -157,7 +178,7 @@
                             <p class="text-gray-400">Daftar dan mulai streaming sekarang!</p>
                         </div>
 
-                        <form method="POST" action="{{ route('register') }}" class="space-y-5">
+                        <form method="POST" action="{{ route('register') }}" class="space-y-5" id="registerForm">
                             @csrf
 
                             <!-- Name -->
@@ -175,7 +196,8 @@
                                     </div>
                                     <input id="name" type="text" name="name" value="{{ old('name') }}"
                                         class="input-field w-full pl-12 pr-4 py-3 rounded-lg text-white placeholder-gray-500"
-                                        placeholder="John Doe" required autofocus autocomplete="name">
+                                        placeholder="John Doe" required autofocus autocomplete="name" maxlength="255"
+                                        minlength="2">
                                 </div>
                                 <x-input-error :messages="$errors->get('name')" class="mt-2 text-red-400 text-sm" />
                             </div>
@@ -195,7 +217,7 @@
                                     </div>
                                     <input id="email" type="email" name="email" value="{{ old('email') }}"
                                         class="input-field w-full pl-12 pr-4 py-3 rounded-lg text-white placeholder-gray-500"
-                                        placeholder="nama@example.com" required autocomplete="username">
+                                        placeholder="nama@example.com" required autocomplete="username" maxlength="255">
                                 </div>
                                 <x-input-error :messages="$errors->get('email')" class="mt-2 text-red-400 text-sm" />
                             </div>
@@ -215,18 +237,20 @@
                                     </div>
                                     <input id="password" type="password" name="password"
                                         class="input-field w-full pl-12 pr-4 py-3 rounded-lg text-white placeholder-gray-500"
-                                        placeholder="Minimal 8 karakter" required autocomplete="new-password">
+                                        placeholder="Minimal 8 karakter" required autocomplete="new-password"
+                                        minlength="8" maxlength="255">
                                 </div>
                                 <x-input-error :messages="$errors->get('password')" class="mt-2 text-red-400 text-sm" />
 
                                 <!-- Password Strength Indicator -->
-                                <div class="mt-2 flex gap-2">
-                                    <div class="flex-1 h-1 rounded-full bg-slate-700"></div>
-                                    <div class="flex-1 h-1 rounded-full bg-slate-700"></div>
-                                    <div class="flex-1 h-1 rounded-full bg-slate-700"></div>
+                                <div class="mt-2 flex gap-2 h-1">
+                                    <div id="strength-bar-1" class="flex-1 rounded-full bg-slate-700"></div>
+                                    <div id="strength-bar-2" class="flex-1 rounded-full bg-slate-700"></div>
+                                    <div id="strength-bar-3" class="flex-1 rounded-full bg-slate-700"></div>
                                 </div>
-                                <p class="text-xs text-gray-500 mt-1">Gunakan minimal 8 karakter dengan kombinasi huruf
-                                    dan angka</p>
+                                <p id="strength-text" class="text-xs text-gray-500 mt-1">
+                                    Gunakan minimal 8 karakter dengan kombinasi huruf dan angka
+                                </p>
                             </div>
 
                             <!-- Confirm Password -->
@@ -244,7 +268,8 @@
                                     </div>
                                     <input id="password_confirmation" type="password" name="password_confirmation"
                                         class="input-field w-full pl-12 pr-4 py-3 rounded-lg text-white placeholder-gray-500"
-                                        placeholder="Ulangi password" required autocomplete="new-password">
+                                        placeholder="Ulangi password" required autocomplete="new-password"
+                                        minlength="8" maxlength="255">
                                 </div>
                                 <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2 text-red-400 text-sm" />
                             </div>
@@ -265,7 +290,7 @@
                             </div>
 
                             <!-- Submit Button -->
-                            <button type="submit"
+                            <button type="submit" id="submitBtn"
                                 class="btn-primary w-full py-3 px-4 rounded-lg text-white font-semibold shadow-lg">
                                 Daftar Sekarang
                             </button>
@@ -353,6 +378,80 @@
             </div>
         </div>
     </div>
+
+    <script>
+        // Password Strength Checker
+        const passwordInput = document.getElementById('password');
+        const strengthBars = [
+            document.getElementById('strength-bar-1'),
+            document.getElementById('strength-bar-2'),
+            document.getElementById('strength-bar-3')
+        ];
+        const strengthText = document.getElementById('strength-text');
+
+        passwordInput.addEventListener('input', function() {
+            const password = this.value;
+            let strength = 0;
+
+            // Reset bars
+            strengthBars.forEach(bar => {
+                bar.style.backgroundColor = '#334155';
+            });
+
+            if (password.length >= 8) strength++;
+            if (/[a-z]/.test(password) && /[A-Z]/.test(password)) strength++;
+            if (/[0-9]/.test(password)) strength++;
+            if (/[^a-zA-Z0-9]/.test(password)) strength++;
+
+            // Update bars based on strength
+            if (strength === 1) {
+                strengthBars[0].style.backgroundColor = '#EF4444';
+                strengthText.textContent = 'Password lemah';
+                strengthText.style.color = '#EF4444';
+            } else if (strength === 2 || strength === 3) {
+                strengthBars[0].style.backgroundColor = '#F59E0B';
+                strengthBars[1].style.backgroundColor = '#F59E0B';
+                strengthText.textContent = 'Password cukup kuat';
+                strengthText.style.color = '#F59E0B';
+            } else if (strength >= 4) {
+                strengthBars[0].style.backgroundColor = '#10B981';
+                strengthBars[1].style.backgroundColor = '#10B981';
+                strengthBars[2].style.backgroundColor = '#10B981';
+                strengthText.textContent = 'Password kuat!';
+                strengthText.style.color = '#10B981';
+            }
+        });
+
+        // Prevent double submission
+        const registerForm = document.getElementById('registerForm');
+        const submitBtn = document.getElementById('submitBtn');
+
+        registerForm.addEventListener('submit', function(e) {
+            const password = document.getElementById('password').value;
+            const confirmation = document.getElementById('password_confirmation').value;
+
+            // Client-side password match validation
+            if (password !== confirmation) {
+                e.preventDefault();
+                alert('Password dan konfirmasi password tidak cocok!');
+                return;
+            }
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Mendaftar...';
+
+            // Re-enable after 5 seconds in case of error
+            setTimeout(() => {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Daftar Sekarang';
+            }, 5000);
+        });
+
+        // Auto-trim whitespace on email input
+        document.getElementById('email').addEventListener('blur', function() {
+            this.value = this.value.trim();
+        });
+    </script>
 
 </body>
 

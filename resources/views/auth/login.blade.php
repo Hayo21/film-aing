@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <title>Login | Film Aing</title>
 
@@ -96,7 +97,7 @@
             transition: all 0.3s ease;
         }
 
-        .btn-primary:hover {
+        .btn-primary:hover:not(:disabled) {
             background: linear-gradient(135deg, #B91C1C, #DC2626);
             transform: translateY(-2px);
             box-shadow: 0 10px 25px rgba(239, 68, 68, 0.3);
@@ -104,6 +105,11 @@
 
         .btn-primary:active {
             transform: translateY(0);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
         }
 
         /* === BACKGROUND PATTERN === */
@@ -130,7 +136,8 @@
                 class="bg-slate-900/95 backdrop-blur-sm border {{ session('error') ? 'border-red-500' : 'border-green-500' }} rounded-lg shadow-2xl p-4 min-w-[300px] max-w-md">
                 <div class="flex items-start gap-3">
                     @if (session('error'))
-                        <div class="w-10 h-10 rounded-full bg-red-500/20 flex items-center justify-center flex-shrink-0">
+                        <div
+                            class="w-10 h-10 rounded-full bg-red-500/20 flex items-center justify-center flex-shrink-0">
                             <svg class="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M6 18L18 6M6 6l12 12" />
@@ -274,7 +281,7 @@
                         <!-- Session Status -->
                         <x-auth-session-status class="mb-4" :status="session('status')" />
 
-                        <form method="POST" action="{{ route('login') }}" class="space-y-6">
+                        <form method="POST" action="{{ route('login') }}" class="space-y-6" id="loginForm">
                             @csrf
 
                             <!-- Email Address -->
@@ -292,7 +299,8 @@
                                     </div>
                                     <input id="email" type="email" name="email" value="{{ old('email') }}"
                                         class="input-field w-full pl-12 pr-4 py-3 rounded-lg text-white placeholder-gray-500"
-                                        placeholder="nama@example.com" required autofocus autocomplete="username">
+                                        placeholder="nama@example.com" required autofocus autocomplete="username"
+                                        maxlength="255">
                                 </div>
                                 <x-input-error :messages="$errors->get('email')" class="mt-2 text-red-400 text-sm" />
                             </div>
@@ -337,7 +345,7 @@
                             </div>
 
                             <!-- Submit Button -->
-                            <button type="submit"
+                            <button type="submit" id="submitBtn"
                                 class="btn-primary w-full py-3 px-4 rounded-lg text-white font-semibold shadow-lg">
                                 Sign In
                             </button>
@@ -400,6 +408,21 @@
         if (document.getElementById('toast')) {
             setTimeout(closeToast, 5000);
         }
+
+        // Prevent double submission
+        const loginForm = document.getElementById('loginForm');
+        const submitBtn = document.getElementById('submitBtn');
+
+        loginForm.addEventListener('submit', function(e) {
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Signing In...';
+
+            // Re-enable after 3 seconds in case of error
+            setTimeout(() => {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Sign In';
+            }, 3000);
+        });
     </script>
 
 </body>
