@@ -8,7 +8,6 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\FordisController;
 use App\Http\Controllers\SocialiteController;
 use App\Http\Controllers\BookmarkController;
-// Tambahan import untuk controller auth custom Anda
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 
@@ -45,18 +44,17 @@ Route::get('/detail-anime/{id}', [HomeController::class, 'showAnime'])->name('ho
 
 
 // --- GUEST ROUTES (Login, Register, OAuth) ---
-// Route ini hanya bisa diakses jika user BELUM login
 Route::middleware('guest')->group(function () {
     // Login routes
     Route::get('login', [AuthenticatedSessionController::class, 'create'])->name('login');
     Route::post('login', [AuthenticatedSessionController::class, 'store'])
-        ->middleware('throttle:5,1') // 5 attempts per minute
+        ->middleware('throttle:5,1')
         ->name('login.store');
 
     // Register routes  
     Route::get('register', [RegisteredUserController::class, 'create'])->name('register');
     Route::post('register', [RegisteredUserController::class, 'store'])
-        ->middleware('throttle:5,60') // 5 registrations per hour
+        ->middleware('throttle:5,60')
         ->name('register.store');
 
     // Google OAuth
@@ -70,14 +68,15 @@ Route::middleware('guest')->group(function () {
 
 
 // --- AUTHENTICATED ROUTES ---
-// Route ini hanya bisa diakses jika user SUDAH login
-
 Route::middleware('auth')->group(function () {
     // Fordis Actions
     Route::get('/fordis-create', [FordisController::class, 'create'])->name('fordis.create');
     Route::post('/fordis', [FordisController::class, 'store'])->name('fordis.store');
     Route::post('/fordis/{id}/like', [FordisController::class, 'toggleLike'])->name('fordis.like');
-    Route::post('/fordis/{id}/comment', [FordisController::class, 'storeComment'])->name('fordis.comment');
+
+    // Comment Routes - DIPERBAIKI DISINI
+    Route::post('/fordis/{id}/comment', [FordisController::class, 'storeComment'])->name('fordis.comment.store');
+    Route::post('/comment/{comment}/like', [FordisController::class, 'toggleCommentLike'])->name('fordis.comment.like');
 
     // Comments (Movie & Anime)
     Route::post('/comments', [HomeController::class, 'storeComment'])->name('comments.store');
@@ -99,5 +98,5 @@ Route::get('/dashboard', function () {
     return redirect()->route('fordis');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-// Require Default Auth Routes (Logout, Verify Email, etc.)
+// Require Default Auth Routes
 require __DIR__ . '/auth.php';

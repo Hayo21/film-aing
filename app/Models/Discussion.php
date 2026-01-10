@@ -35,7 +35,7 @@ class Discussion extends Model
 
     public function comments()
     {
-        return $this->hasMany(DiscussionComment::class)->latest();
+        return $this->morphMany(Comment::class, 'commentable');
     }
 
     // Helper methods

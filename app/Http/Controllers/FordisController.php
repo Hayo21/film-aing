@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Discussion;
+use App\Models\Comment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -14,7 +15,6 @@ class FordisController extends Controller
 
         $query = Discussion::with(['user', 'likes', 'comments']);
 
-        // Filter berdasarkan kategori
         switch ($filter) {
             case 'movies':
                 $query->where('media_type', 'movie');
@@ -28,7 +28,7 @@ class FordisController extends Controller
             case 'latest':
                 $query->latest();
                 break;
-            default: // trending
+            default:
                 $query->withCount('likes')
                     ->orderBy('likes_count', 'desc')
                     ->orderBy('created_at', 'desc');
@@ -36,7 +36,6 @@ class FordisController extends Controller
 
         $discussions = $query->paginate(10);
 
-        // Hitung trending topics
         $trendingTopics = Discussion::select('category')
             ->selectRaw('COUNT(*) as count')
             ->groupBy('category')
@@ -49,10 +48,17 @@ class FordisController extends Controller
 
     public function show($id)
     {
-        $discussion = Discussion::with(['user', 'comments.user', 'likes'])
-            ->findOrFail($id);
+        $discussion = Discussion::with([
+            'user',
+            'comments' => function ($query) {
+                // Hanya ambil parent comments (yang tidak punya parent_id)
+                $query->whereNull('parent_id')
+                    ->with(['user', 'replies.user', 'replies.likes', 'likes'])
+                    ->latest();
+            },
+            'likes'
+        ])->findOrFail($id);
 
-        // Increment views
         $discussion->increment('views');
 
         return view('fordis.show', compact('discussion'));
@@ -98,15 +104,12 @@ class FordisController extends Controller
         $like = $discussion->likes()->where('user_id', $userId)->first();
 
         if ($like) {
-            // Jika sudah ada dan sama, hapus
             if ($like->is_like == $request->is_like) {
                 $like->delete();
             } else {
-                // Jika beda, update
                 $like->update(['is_like' => $request->is_like]);
             }
         } else {
-            // Buat baru
             $discussion->likes()->create([
                 'user_id' => $userId,
                 'is_like' => $request->is_like
@@ -119,16 +122,43 @@ class FordisController extends Controller
     public function storeComment(Request $request, $id)
     {
         $request->validate([
-            'content' => 'required|max:1000'
+            'content' => 'required|max:1000',
+            'parent_id' => 'nullable|exists:comments,id'
         ]);
 
         $discussion = Discussion::findOrFail($id);
 
+        // Gunakan polymorphic relationship
         $discussion->comments()->create([
             'user_id' => Auth::id(),
+            'parent_id' => $request->parent_id,
             'content' => $request->content
         ]);
 
         return back()->with('success', 'Komentar berhasil ditambahkan!');
+    }
+
+    // Toggle like/dislike untuk comment
+    public function toggleCommentLike(Request $request, $commentId)
+    {
+        $comment = Comment::findOrFail($commentId);
+        $userId = Auth::id();
+
+        $like = $comment->likes()->where('user_id', $userId)->first();
+
+        if ($like) {
+            if ($like->is_like == $request->is_like) {
+                $like->delete();
+            } else {
+                $like->update(['is_like' => $request->is_like]);
+            }
+        } else {
+            $comment->likes()->create([
+                'user_id' => $userId,
+                'is_like' => $request->is_like
+            ]);
+        }
+
+        return back()->with('success', 'Berhasil!');
     }
 }
